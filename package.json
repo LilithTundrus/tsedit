@@ -1,0 +1,27 @@
+{
+  "name": "tsedit",
+  "version": "0.0.1",
+  "description": "DOS edit-like application in typescript",
+  "main": "build/index.js",
+  "scripts": {
+    "test": "npm test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LilithTundrus/tsedit.git"
+  },
+  "keywords": [
+    "dos",
+    "js",
+    "ts",
+    "edit",
+    "cli",
+    "editor"
+  ],
+  "author": "Lilith Tundrus",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/LilithTundrus/tsedit/issues"
+  },
+  "homepage": "https://github.com/LilithTundrus/tsedit#readme"
+}
