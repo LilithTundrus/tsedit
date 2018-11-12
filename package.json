@@ -23,5 +23,8 @@
   "bugs": {
     "url": "https://github.com/LilithTundrus/tsedit/issues"
   },
-  "homepage": "https://github.com/LilithTundrus/tsedit#readme"
+  "homepage": "https://github.com/LilithTundrus/tsedit#readme",
+  "dependencies": {
+    "@types/node": "^10.12.5"
+  }
 }
