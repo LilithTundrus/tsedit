@@ -5,6 +5,11 @@
 'use strict';
 
 
-// Node/NPM dependencies
+// Check for an argument, if not then launch a blank editor
 
-console.log('Test');
+if (process.argv[2]) {
+    // Perform the operations to attempt to read/open a file
+    console.log(process.argv[2]);
+} else {
+    // Launch the edtior in an empty mode and in the unsaved state
+}
