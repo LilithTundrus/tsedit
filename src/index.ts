@@ -5,7 +5,8 @@
 'use strict';
 
 
-// Check for an argument, if not then launch a blank editor
+// Main entry point for the editor, check for an argument, 
+// if not then launch a blank editor
 
 if (process.argv[2]) {
     // Perform the operations to attempt to read/open a file
