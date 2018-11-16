@@ -12,13 +12,13 @@ import * as fs from 'fs';
 export default class Editor {
     private filePath: string;
 
-    // The editor's 'state' is whether or not it's editing a new or existing file
+    // The editor's 'state' is going to be something that evolves over time
     private editorState: string;
 
     // Create the blessed program object to associate with the blessed screen for the class
     private program = blessed.program();
 
-    // Declared as any since blessed's typings aren't correct
+    // These are the cursor options for blessed. Declared as any since blessed's typings aren't correct
     private cursorOptions: any = {
         artificial: true,
         shape: 'line',
@@ -36,6 +36,10 @@ export default class Editor {
         cursor: this.cursorOptions
     });
 
+    /** Creates an instance of Editor.
+     * @param {string} [filePath]
+     * @memberof Editor
+     */
     constructor(filePath?: string) {
         this.filePath = filePath;
 
@@ -43,16 +47,20 @@ export default class Editor {
             this.startEditorBlank();
         } else {
             // First, make sure the path exists
-            // Try and read the file, else print an error that the file cannot be opened after launching the editor
             if (!fs.existsSync(this.filePath)) {
                 console.log(`\nFile ${this.filePath} does not exist.`);
                 process.exit(1);
             }
 
+            let contents;
+
+            // Try and read the file, else print an error that the file cannot be opened after launching the editor
             try {
-                fs.readFileSync(this.filePath)
+                contents = fs.readFileSync(this.filePath);
+                this.startEditor(contents);
             } catch (e) {
-                console.log(`Could not read`);
+                console.log(`Could not read file ${this.filePath}: ${e}`);
+                process.exit(1);
             }
         }
     }
@@ -70,18 +78,13 @@ export default class Editor {
      * @private
      * @memberof Editor
      */
-    private startEditor() {
-        // First, try and read the file
-        if (fs.existsSync(this.filePath)) {
-            // Start the editor with the contents of the file
-            // Make sure the file is actually readable
-        }
+    private startEditor(contents) {
+        // TODO: Make sure the contents arg is a string, if not, convert the buffer
         console.log('Launching normal editor...');
-
+        console.log(contents);
 
         // If the file cannot be read, log to the console
-
+        process.exit(0);
     }
 
-    private
 }
