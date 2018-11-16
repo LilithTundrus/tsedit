@@ -3,6 +3,7 @@
 
 // Node/NPM dependencies
 import * as blessed from 'blessed';
+import * as fs from 'fs';
 
 // This is the main editor class that puts all of the pieces together 
 // to create a functioning application
@@ -34,12 +35,25 @@ export default class Editor {
         // Used, but often doesn't work in windows
         cursor: this.cursorOptions
     });
-    
+
     constructor(filePath?: string) {
         this.filePath = filePath;
 
         if (!this.filePath) {
             this.startEditorBlank();
+        } else {
+            // First, make sure the path exists
+            // Try and read the file, else print an error that the file cannot be opened after launching the editor
+            if (!fs.existsSync(this.filePath)) {
+                console.log(`\nFile ${this.filePath} does not exist.`);
+                process.exit(1);
+            }
+
+            try {
+                fs.readFileSync(this.filePath)
+            } catch (e) {
+                console.log(`Could not read`);
+            }
         }
     }
 
@@ -48,10 +62,26 @@ export default class Editor {
      * @memberof Editor
      */
     private startEditorBlank() {
-
+        // Get this one working first!
+        console.log('Launching blank editor...');
     }
 
+    /** Start the editor in a state where the text is already provided
+     * @private
+     * @memberof Editor
+     */
     private startEditor() {
+        // First, try and read the file
+        if (fs.existsSync(this.filePath)) {
+            // Start the editor with the contents of the file
+            // Make sure the file is actually readable
+        }
+        console.log('Launching normal editor...');
+
+
+        // If the file cannot be read, log to the console
 
     }
+
+    private
 }
