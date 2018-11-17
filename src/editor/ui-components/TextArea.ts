@@ -10,13 +10,12 @@ import Editor from '../Editor';
 
 // Create the textArea textbox, where the actual text being edited will be displayed
 
-export default class textArea {
+export default class TextArea {
     // The editorInstance allows us to access feature from the Editor class instance to do things
     // like change state, etc.
     private editorInstance: Editor;
     private content;
-
-    textArea: any;
+    textArea: blessed.Widgets.BoxElement ;
 
     constructor(editorInstance: Editor, content) {
         this.editorInstance = editorInstance;
