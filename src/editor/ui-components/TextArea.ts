@@ -15,7 +15,7 @@ export default class TextArea {
     // like change state, etc.
     private editorInstance: Editor;
     private content;
-    textArea: blessed.Widgets.BoxElement ;
+    textArea: blessed.Widgets.BoxElement;
 
     constructor(editorInstance: Editor, content) {
         this.editorInstance = editorInstance;

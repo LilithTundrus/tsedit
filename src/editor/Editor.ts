@@ -91,7 +91,11 @@ export default class Editor {
             return process.exit(0);
         }
 
-        // Set the title of the terminal window (if any) -- this will eventually take cli arguments for reading a file to be edited
+        // TODO: On change to the text, the filepath should have a * to indicate that it has not 
+        // been saved
+
+        // Set the title of the terminal window (if any) -- this will eventually take cli arguments 
+        // for reading a file to be edited
         this.screen.title = `TS-EDIT - ${this.filePath}`;
 
         this.textArea = new TextArea(this, parsedContent);
@@ -99,11 +103,8 @@ export default class Editor {
         this.screen.append(this.textArea.textArea);
         this.screen.render()
         this.textArea.textArea.focus();
-
-        // process.exit(0);
     }
 
     // TODO: Things that need to be shared across UI components should go here
     // Stuff like, getting and setting the state of the editor/etc.
-
 }
