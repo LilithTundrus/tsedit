@@ -8,17 +8,17 @@ import * as fs from 'fs';
 // This is the main editor class that puts all of the pieces together 
 // to create a functioning application
 
-
 export default class Editor {
     private filePath: string;
 
     // The editor's 'state' is going to be something that evolves over time
-    private editorState: string;
+    editorState: string;
 
     // Create the blessed program object to associate with the blessed screen for the class
     private program = blessed.program();
 
-    // These are the cursor options for blessed. Declared as any since blessed's typings aren't correct
+    // These are the cursor options for blessed. Declared as any since blessed's typings 
+    // aren't correct
     private cursorOptions: any = {
         artificial: true,
         shape: 'line',
@@ -26,7 +26,7 @@ export default class Editor {
         color: null
     }
 
-    private screen = blessed.screen({
+    screen = blessed.screen({
         smartCSR: true,
         // Autopad screen elements unless no padding it explicitly required
         autoPadding: true,
@@ -83,8 +83,10 @@ export default class Editor {
         console.log('Launching normal editor...');
         console.log(contents);
 
-        // If the file cannot be read, log to the console
         process.exit(0);
     }
+
+    // TODO: Things that need to be shared across UI components should go here
+    // Stuff like, getting and setting the state of the editor/etc.
 
 }
