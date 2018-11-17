@@ -4,18 +4,19 @@
 // Node/NPM dependencies
 import * as blessed from 'blessed';
 import * as fs from 'fs';
+import TextArea from './ui-components/TextArea';
 
 // This is the main editor class that puts all of the pieces together 
 // to create a functioning application
 
 export default class Editor {
-    private filePath: string;
+    filePath: string;
 
     // The editor's 'state' is going to be something that evolves over time
     editorState: string;
 
     // Create the blessed program object to associate with the blessed screen for the class
-    private program = blessed.program();
+    program = blessed.program();
 
     // These are the cursor options for blessed. Declared as any since blessed's typings 
     // aren't correct
@@ -35,6 +36,8 @@ export default class Editor {
         // Used, but often doesn't work in windows
         cursor: this.cursorOptions
     });
+
+    textArea: TextArea;
 
     /** Creates an instance of Editor.
      * @param {string} [filePath]
@@ -81,9 +84,10 @@ export default class Editor {
     private startEditor(contents) {
         // TODO: Make sure the contents arg is a string, if not, convert the buffer
         console.log('Launching normal editor...');
-        console.log(contents);
+        // console.log(contents);
 
-        process.exit(0);
+        this.textArea = new TextArea(this, contents);
+        // process.exit(0);
     }
 
     // TODO: Things that need to be shared across UI components should go here
