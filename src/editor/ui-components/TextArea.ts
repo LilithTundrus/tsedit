@@ -12,6 +12,7 @@ import KeyHandler from '../KeyHandler';
 // Create the textArea textbox, where the actual text being edited will be displayed
 
 export default class TextArea {
+    
     // The editorInstance allows us to access features from the Editor class instance to do things
     // like change state, etc.
     private editorInstance: Editor;
@@ -22,6 +23,8 @@ export default class TextArea {
     constructor(editorInstance: Editor, content) {
         this.editorInstance = editorInstance;
         this.content = content;
+        this.keyHandler = new KeyHandler(editorInstance);
+
 
         // Create the textArea blessed box (declared as any due to some typings being incorrect)
         this.textArea = blessed.box(<any>{
@@ -121,10 +124,8 @@ export default class TextArea {
             content: this.content,
         });
 
-        this.editorInstance.program.cursorBackward(4)
-        this.editorInstance.screen.render()
-
-
+        this.editorInstance.screen.render();
+        // Construct each key listener for the textArea
         this.registerKeyListeners();
     }
 
@@ -143,25 +144,12 @@ export default class TextArea {
             return process.exit(0);
         });
 
-        this.textArea.key('right', () => {
-            // This callback returns an err and data object, the data object has the x/y position of the cursor
-            this.editorInstance.program.getCursor((err, data) => {
-                if (err) return;
-                // Use the custom right keyHandler, passing the needed objects for blessed operations
-                this.editorInstance.program.cursorForward();
-                this.editorInstance.screen.render()
-            });
+        this.textArea.key('left', () => {
+            this.keyHandler.leftArrowHandler();
         });
 
-        this.textArea.key('left', () => {
-            // This callback returns an err and data object, the data object has the x/y position of the cursor
-            this.editorInstance.program.getCursor((err, data) => {
-                if (err) return;
-                // Use the custom right keyHandler, passing the needed objects for blessed operations
-                this.editorInstance.program.cursorBackward();
-                this.editorInstance.screen.render()
-            });
+        this.textArea.key('right', () => {
+            this.keyHandler.rightArrowHandler();
         });
     }
-
 }
