@@ -5,6 +5,7 @@
 import * as blessed from 'blessed';
 import * as fs from 'fs';
 import TextArea from './ui-components/TextArea';
+import StatusBar from './ui-components/StatusBar';
 
 // This is the main editor class that puts all of the pieces together 
 // to create a functioning application
@@ -38,6 +39,7 @@ export default class Editor {
     });
 
     textArea: TextArea;
+    statusBar: StatusBar;
 
     /** Creates an instance of Editor.
      * @param {string} [filePath]
@@ -98,10 +100,16 @@ export default class Editor {
         // for reading a file to be edited
         this.screen.title = `TS-EDIT - ${this.filePath}`;
 
+        // Initialize all classes needed to construct the UI
         this.textArea = new TextArea(this, parsedContent);
+        this.statusBar = new StatusBar(this);
+
         this.textArea.textArea.setLabel(`${this.filePath}`);
+        
         this.screen.append(this.textArea.textArea);
-        this.screen.render()
+        this.screen.append(this.statusBar.statusBar);
+
+        this.screen.render();
         this.textArea.textArea.focus();
     }
 
