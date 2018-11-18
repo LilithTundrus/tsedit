@@ -105,9 +105,20 @@ export default class Editor {
         this.statusBar = new StatusBar(this);
 
         this.textArea.textArea.setLabel(`${this.filePath}`);
-        
+
+        // Append each UI element to the blessed screen
         this.screen.append(this.textArea.textArea);
         this.screen.append(this.statusBar.statusBar);
+
+        // Reset the cursor position before rendering the UI
+        this.screen.program.getCursor((err, data) => {
+            this.screen.program.cursorUp(this.screen.height);
+            this.screen.program.cursorBackward(this.screen.width);
+            // Put the cursor at line 1 column one of the editing window
+            this.screen.program.cursorForward(1);
+            this.screen.program.cursorDown(2);
+            this.screen.render();
+        });
 
         this.screen.render();
         this.textArea.textArea.focus();
