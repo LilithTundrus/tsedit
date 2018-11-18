@@ -93,10 +93,10 @@ export default class Editor {
             return process.exit(0);
         }
 
-        // TODO: On change to the text, the filepath should have a * to indicate that it has not 
+        // TODO: On change to the text, the filepath should have a * to indicate that it has not
         // been saved
 
-        // Set the title of the terminal window (if any) -- this will eventually take cli arguments 
+        // Set the title of the terminal window (if any) -- this will eventually take cli arguments
         // for reading a file to be edited
         this.screen.title = `TS-EDIT - ${this.filePath}`;
 
