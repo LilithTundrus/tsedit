@@ -71,37 +71,35 @@ export default class StatusBar {
             content: '',
         });
 
-        this.editorInstance.screen.render();
-
         this.constructStatusBarText();
     }
 
     getInfoSection() {
-
+        return this.statusInfo;
     }
 
-    setInfoSection() {
-
+    setInfoSection(newStatus: string) {
+        this.statusInfo = newStatus;
     }
 
     getRows() {
-
+        return this.row;
     }
 
-    setRows() {
-
+    setRows(newRow: number) {
+        this.row = newRow;
     }
 
     getColumns() {
-
+        return this.column;
     }
 
-    setColumns() {
-
+    setColumns(newColumn: number) {
+        this.column = newColumn;
     }
 
     private constructStatusBarText() {
         // This function will take each section of the statusbar and reconstruct it
-        this.statusBar.setContent(`Line:${this.row} | Col:${this.column}\t${this.statusInfo}`);
+        this.statusBar.setContent(`Line:${this.row} | Col:${this.column} \t ${this.statusInfo}`);
     }
 }
