@@ -14,12 +14,55 @@ import Editor from '../Editor';
 
 
 export default class StatusBar {
-    // The editorInstance allows us to access feature from the Editor class instance to do things
+    // The editorInstance allows us to access features from the Editor class instance to do things
     // like change state, etc.
     private editorInstance: Editor;
+    statusBar: blessed.Widgets.TextElement;
 
     constructor(editorInstance: Editor) {
+        this.editorInstance = editorInstance;
 
+        // Create the statusBar UI element as a blessed text element type (box)
+        this.statusBar = blessed.text({
+            // Parent option for the component
+            parent: this.editorInstance.screen,
+
+            // Component relative position options
+
+            // Set the bottom of the statusBar element to be the bottom of the screen and then up
+            // (minus) 1
+            bottom: <any>'bottom' - 1,
+
+
+            // Component size options
+
+            // Set the statusBar element to 100% of the screen
+            width: '100%',
+            // Height of the element should
+            height: 1,
+            // Padding of 1 for the left and right of the statusBar
+            padding: 1,
+
+
+            // Content control options
+            // Don't capture SGR blessed escape codes, that could cause issues
+            tags: false,
+            // Don't shrink the text box if the window resizes
+            shrink: false,
+
+
+            // Styling options
+
+            style: {
+                fg: 'black',
+                bg: 'light-grey',
+            },
+
+
+            // Content/label options
+
+            content: 'PH',
+        })
     }
 
     setInfoSection() {
@@ -35,6 +78,7 @@ export default class StatusBar {
     }
 
     private constructStatusBarText() {
-        
+        // This function will take each section of the statusbar and reconstruct it
+
     }
 }
