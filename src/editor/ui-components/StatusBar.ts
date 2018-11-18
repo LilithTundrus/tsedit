@@ -19,6 +19,10 @@ export default class StatusBar {
     private editorInstance: Editor;
     statusBar: blessed.Widgets.TextElement;
 
+    private statusInfo = '< Press Ctrl + W to quit >';
+    private row = 0;
+    private column = 0;
+
     constructor(editorInstance: Editor) {
         this.editorInstance = editorInstance;
 
@@ -30,7 +34,7 @@ export default class StatusBar {
             // Component relative position options
 
             // Set the bottom of the statusBar element to be the bottom of the screen and then up
-            // (minus) 1
+            // (minus) 1 (declared as any due to typings being fussy)
             bottom: <any>'bottom' - 1,
 
 
@@ -41,7 +45,10 @@ export default class StatusBar {
             // Height of the element should
             height: 1,
             // Padding of 1 for the left and right of the statusBar
-            padding: 1,
+            padding: {
+                left: 1,
+                right: 1
+            },
 
 
             // Content control options
@@ -61,24 +68,40 @@ export default class StatusBar {
 
             // Content/label options
 
-            content: 'PH',
-        })
+            content: '',
+        });
+
+        this.editorInstance.screen.render();
+
+        this.constructStatusBarText();
+    }
+
+    getInfoSection() {
+
     }
 
     setInfoSection() {
 
     }
 
-    updateRows() {
+    getRows() {
 
     }
 
-    updateColumns() {
+    setRows() {
+
+    }
+
+    getColumns() {
+
+    }
+
+    setColumns() {
 
     }
 
     private constructStatusBarText() {
         // This function will take each section of the statusbar and reconstruct it
-
+        this.statusBar.setContent(`Line:${this.row} | Col:${this.column}\t${this.statusInfo}`);
     }
 }
