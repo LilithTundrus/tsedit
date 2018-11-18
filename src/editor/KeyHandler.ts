@@ -10,6 +10,7 @@ import Editor from './Editor';
 // textArea UI component
 
 export default class KeyHandler {
+    
     // The editorInstance allows us to access features from the Editor class instance to do things
     // like change state, etc.
     private editorInstance: Editor;
@@ -20,7 +21,24 @@ export default class KeyHandler {
 
     }
 
+    leftArrowHandler() {
+        // This callback returns an err and data object, the data object has the x/y position of the cursor
+        this.editorInstance.program.getCursor((err, data) => {
+            if (err) return;
+            // Use the custom right keyHandler, passing the needed objects for blessed operations
+            this.editorInstance.program.cursorBackward();
+            this.editorInstance.screen.render();
+        });
+    }
 
-
+    rightArrowHandler() {
+        // This callback returns an err and data object, the data object has the x/y position of the cursor
+        this.editorInstance.program.getCursor((err, data) => {
+            if (err) return;
+            // Use the custom right keyHandler, passing the needed objects for blessed operations
+            this.editorInstance.program.cursorForward();
+            this.editorInstance.screen.render();
+        });
+    }
 
 }
