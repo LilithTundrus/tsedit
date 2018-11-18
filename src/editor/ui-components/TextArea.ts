@@ -4,6 +4,7 @@
 // Node/NPM dependencies
 import * as blessed from 'blessed';
 import Editor from '../Editor';
+import KeyHandler from '../KeyHandler';
 
 // This file contains one of the blessed components for constructing the UI in an effort to
 // keep this project modular
@@ -16,6 +17,7 @@ export default class TextArea {
     private editorInstance: Editor;
     private content;
     textArea: blessed.Widgets.BoxElement;
+    keyHandler: KeyHandler;
 
     constructor(editorInstance: Editor, content) {
         this.editorInstance = editorInstance;
@@ -161,7 +163,5 @@ export default class TextArea {
             });
         });
     }
-
-
 
 }
