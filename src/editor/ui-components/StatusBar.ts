@@ -14,11 +14,14 @@ import Editor from '../Editor';
 
 
 export default class StatusBar {
+
     // The editorInstance allows us to access features from the Editor class instance to do things
     // like change state, etc.
     private editorInstance: Editor;
+    // Declare the statusBar property as the proper element
     statusBar: blessed.Widgets.TextElement;
 
+    // Declare properties for what information the statusBar consists of
     private statusInfo = '< Press Ctrl + W to quit >';
     private row = 0;
     private column = 0;
@@ -80,6 +83,7 @@ export default class StatusBar {
 
     setInfoSection(newStatus: string) {
         this.statusInfo = newStatus;
+        this.constructStatusBarText();
     }
 
     getRows() {
@@ -88,6 +92,7 @@ export default class StatusBar {
 
     setRows(newRow: number) {
         this.row = newRow;
+        this.constructStatusBarText();
     }
 
     getColumns() {
@@ -96,6 +101,7 @@ export default class StatusBar {
 
     setColumns(newColumn: number) {
         this.column = newColumn;
+        this.constructStatusBarText();
     }
 
     private constructStatusBarText() {
