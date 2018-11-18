@@ -11,7 +11,7 @@ import Editor from '../Editor';
 // Create the textArea textbox, where the actual text being edited will be displayed
 
 export default class TextArea {
-    // The editorInstance allows us to access feature from the Editor class instance to do things
+    // The editorInstance allows us to access features from the Editor class instance to do things
     // like change state, etc.
     private editorInstance: Editor;
     private content;
@@ -21,6 +21,7 @@ export default class TextArea {
         this.editorInstance = editorInstance;
         this.content = content;
 
+        // Create the textArea blessed box (declared as any due to some typings being incorrect)
         this.textArea = blessed.box(<any>{
             // Parent option for the component, controls how the element interacts with others
             parent: this.editorInstance.screen,
@@ -35,7 +36,8 @@ export default class TextArea {
 
             // Keep the width of this element to 100% of the screen
             width: '100%+1',
-            // Height should be the entire screen minus 1 because of the statusBar (not doing this hide part of the text entry window)
+            // Height should be the entire screen minus 1 because of the statusBar 
+            // (not doing this would hide part of the text entry window)
             height: '100%-1',
 
 
@@ -43,7 +45,7 @@ export default class TextArea {
 
             // Allow input of the element
             input: true,
-            // Dissallow default keys
+            // Dissallow default key mappings
             keys: false,
             // Set the element to support all key inputs
             keyable: true,
@@ -55,7 +57,7 @@ export default class TextArea {
             tags: false,
             // Don't shrink the text box if the window resizes
             shrink: false,
-            // Dissallow text to wrap down the the next line (not documented)
+            // Dissallow text to wrap down the the next line (not documented but still works)
             wrap: true,
             visible: true,
 
@@ -73,7 +75,8 @@ export default class TextArea {
             // Always allow the element to be scrollable, even if the content is shorter
             // than the height of the windows
             alwaysScroll: true,
-            // Scrollbar styles, using extended characters here
+            // Scrollbar styles, using extended characters here to 
+            // represent the scroll location character
             scrollbar: {
                 ch: '█',
                 track: {
@@ -84,7 +87,9 @@ export default class TextArea {
             // Limit the maximum content to 16,000 lines (at least initially)
             baseLimit: 16000,
 
+
             // Border options
+
             border: {
                 type: 'line'
             },
@@ -107,12 +112,25 @@ export default class TextArea {
 
             // Content/label options
 
-            // The label is a string that 
+            // The label is a string that sits on the top left corner of the element,
+            // this is similar to a title windows
             label: this.editorInstance.filePath,
+            // The content is what text the box should display
             content: this.content,
         });
 
+        this.editorInstance.program.cursorBackward(4)
+        this.editorInstance.screen.render()
 
+
+        this.registerKeyListeners();
+    }
+
+    /** Register the key listeners for the textArea element
+     * @private
+     * @memberof TextArea
+     */
+    private registerKeyListeners() {
         // Quit on Control-W
         // TODO: This should be aware of whether or not the editor has a file that isn't saved/etc.
         this.textArea.key(['C-w'], () => {
@@ -121,6 +139,26 @@ export default class TextArea {
             // on if the editor started with a file or not)
 
             return process.exit(0);
+        });
+
+        this.textArea.key('right', () => {
+            // This callback returns an err and data object, the data object has the x/y position of the cursor
+            this.editorInstance.program.getCursor((err, data) => {
+                if (err) return;
+                // Use the custom right keyHandler, passing the needed objects for blessed operations
+                this.editorInstance.program.cursorForward();
+                this.editorInstance.screen.render()
+            });
+        });
+
+        this.textArea.key('left', () => {
+            // This callback returns an err and data object, the data object has the x/y position of the cursor
+            this.editorInstance.program.getCursor((err, data) => {
+                if (err) return;
+                // Use the custom right keyHandler, passing the needed objects for blessed operations
+                this.editorInstance.program.cursorBackward();
+                this.editorInstance.screen.render()
+            });
         });
     }
 
