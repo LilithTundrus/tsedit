@@ -14,9 +14,9 @@ import Editor from "./editor/Editor";
 if (process.argv[2]) {
     // Perform the operations to attempt to read/open a file
     const editor = new Editor(process.argv[2]);
-    console.log(`Loading file: ${process.argv[2]}...`)
+    console.log(`\nLoading file: ${process.argv[2]}...`);
 } else {
     // Launch the edtior in an empty mode and in the unsaved state
     const editor = new Editor();
-    console.log('Loading TS-EDIT')
+    console.log('\nLoading TS-EDIT');
 }
