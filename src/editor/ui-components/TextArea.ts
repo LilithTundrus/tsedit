@@ -203,10 +203,7 @@ export default class TextArea {
     getVisibleLines() {
         let visibleLines = [];
 
-        let relativeBottom = this.getRelativeBottom();
-        let relativeTop = this.getRelativeTop();
-
-        for (let i = this.verticalScrollOffset; i < this.textArea.height; i++) {
+        for (let i = this.verticalScrollOffset; i < this.textArea.height + this.verticalScrollOffset; i++) {
             visibleLines.push(this.textArea.getLine(i))
         }
         return visibleLines;

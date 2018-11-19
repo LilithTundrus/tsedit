@@ -73,6 +73,7 @@ export default class KeyHandler {
                 // (less cursor jank)
                 this.editorInstance.program.cursorPos(2, cursor.x - 1);
                 this.editorInstance.screen.render();
+                this.editorInstance.textArea.verticalScrollOffset--;
             }
         });
     }
@@ -98,6 +99,7 @@ export default class KeyHandler {
                 // that's needed
                 this.editorInstance.program.cursorPos(this.editorInstance.screen.height - 2, cursor.x - 1);
                 this.editorInstance.screen.render();
+                this.editorInstance.textArea.verticalScrollOffset++;
             }
         });
     }
