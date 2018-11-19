@@ -65,7 +65,7 @@ export default class TextArea {
             // Don't shrink the text box if the window resizes
             shrink: false,
             // Dissallow text to wrap down the the next line (not documented but still works)
-            wrap: true,
+            wrap: false,
             visible: true,
 
 
@@ -172,7 +172,7 @@ export default class TextArea {
     // This will move the view of the editor 1 character to the right, using
     // the 'shadow' version of the document
     rightshiftText() {
-        this.textArea
+        let lines = this.getVisibleLines();
     }
 
     getViewOffset() {
