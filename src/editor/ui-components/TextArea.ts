@@ -17,6 +17,7 @@ export default class TextArea {
     // like change state, etc.
     private editorInstance: Editor;
     private content;
+    private viewOffSet: number;
     textArea: blessed.Widgets.BoxElement;
     keyHandler: KeyHandler;
 
@@ -159,5 +160,54 @@ export default class TextArea {
         this.textArea.key('down', () => {
             this.keyHandler.downArrowHandler();
         });
+    }
+
+    // This will move the view of the editor 1 character to the left, using
+    // the 'shadow' version of the document
+    leftShiftText() {
+
+    }
+
+    // This will move the view of the editor 1 character to the right, using
+    // the 'shadow' version of the document
+    rightshiftText() {
+        this.textArea
+    }
+
+    getViewOffset() {
+        return this.viewOffSet;
+    }
+
+
+    getRelativeTop() {
+        let relativeBottom = this.textArea.getScroll();
+        let relativeTop = relativeBottom - this.textArea.height;
+
+        if (relativeBottom == 0) {
+            relativeTop = 0;
+        }
+
+        return relativeTop;
+    }
+
+
+    getRelativeBottom() {
+        let relativeBottom: any = this.textArea.getScroll();
+        if (relativeBottom == 0) {
+            relativeBottom = this.textArea.height;
+        }
+        return relativeBottom;
+    }
+
+    getVisibleLines() {
+        let visibleLines = [];
+
+        let relativeBottom = this.getRelativeBottom();
+        let relativeTop = this.getRelativeTop();
+
+        for (let i = relativeTop; i < relativeBottom; i++) {
+            visibleLines.push(this.textArea.getLine(i))
+        }
+        return visibleLines;
     }
 }

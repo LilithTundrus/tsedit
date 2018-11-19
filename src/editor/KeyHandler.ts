@@ -4,7 +4,8 @@
 // Node/NPM dependencies
 import * as blessed from 'blessed';
 import Editor from './Editor';
-
+// Used for debugging
+import * as fs from 'fs';
 
 // This file contains the class for handling key events for the Editor Class's
 // textArea UI component
@@ -33,6 +34,8 @@ export default class KeyHandler {
             if (cursor.x > 2) {
                 this.editorInstance.program.cursorBackward();
                 this.editorInstance.screen.render();
+                let lines = this.editorInstance.textArea.getVisibleLines();
+                fs.writeFileSync('./LINES.txt', lines.join('\n'));
             }
         });
     }
@@ -46,6 +49,7 @@ export default class KeyHandler {
             if (cursor.x < this.editorInstance.screen.width - 1) {
                 this.editorInstance.program.cursorForward();
                 this.editorInstance.screen.render();
+
             }
         });
     }
