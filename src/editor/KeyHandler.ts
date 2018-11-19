@@ -49,6 +49,12 @@ export default class KeyHandler {
             if (cursor.x < this.editorInstance.screen.width - 1) {
                 this.editorInstance.program.cursorForward();
                 this.editorInstance.screen.render();
+            } else {
+                // Horiztonally scroll the text if the current line is greater than the 
+                // width of the editing window
+                this.editorInstance.textArea.rightshiftText();
+                this.editorInstance.screen.render();
+                this.editorInstance.textArea.viewOffSet++;
             }
         });
     }
@@ -65,7 +71,7 @@ export default class KeyHandler {
                 this.editorInstance.program.cursorUp();
                 this.editorInstance.screen.render();
             }
-            // Scroll the text up by one (sort of, not just yet)
+            // Scroll the text up by one line
             else if (cursor.y == 3 && this.editorInstance.textArea.textArea.getScrollPerc() > 0) {
                 this.editorInstance.textArea.textArea.scroll(-1);
                 this.editorInstance.screen.render();
@@ -97,7 +103,8 @@ export default class KeyHandler {
                 this.editorInstance.screen.render();
                 // For some reason the screen - 2 is what sets the cursor to the bottom position 
                 // that's needed
-                this.editorInstance.program.cursorPos(this.editorInstance.screen.height - 2, cursor.x - 1);
+                let relativeBottomHeight = this.editorInstance.screen.height - 2;
+                this.editorInstance.program.cursorPos(relativeBottomHeight, cursor.x - 1);
                 this.editorInstance.screen.render();
                 this.editorInstance.textArea.verticalScrollOffset++;
             }

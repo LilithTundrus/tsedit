@@ -17,7 +17,7 @@ export default class TextArea {
     // like change state, etc.
     private editorInstance: Editor;
     private content;
-    private viewOffSet: number;
+    viewOffSet: number;
     textArea: blessed.Widgets.BoxElement;
     keyHandler: KeyHandler;
     verticalScrollOffset: number = 0;
@@ -173,10 +173,18 @@ export default class TextArea {
     // the 'shadow' version of the document
     rightshiftText() {
         let lines = this.getVisibleLines();
+
+        lines.forEach((line, index) => {
+            this.textArea.setLine(index + this.verticalScrollOffset, line.substring(1));
+        });
     }
 
     getViewOffset() {
         return this.viewOffSet;
+    }
+
+    setViewOffset(newOffset: number) {
+        this.viewOffSet = newOffset;
     }
 
 
@@ -203,7 +211,7 @@ export default class TextArea {
     getVisibleLines() {
         let visibleLines = [];
 
-        for (let i = this.verticalScrollOffset; i < this.textArea.height + this.verticalScrollOffset; i++) {
+        for (let i = this.verticalScrollOffset; i < this.textArea.height - 2 + this.verticalScrollOffset; i++) {
             visibleLines.push(this.textArea.getLine(i))
         }
         return visibleLines;
