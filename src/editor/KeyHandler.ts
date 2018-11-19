@@ -66,7 +66,7 @@ export default class KeyHandler {
                 this.editorInstance.screen.render();
             }
             // Scroll the text up by one (sort of, not just yet)
-            else if (cursor.y == 3 && this.editorInstance.textArea.textArea.getScrollPerc() > 1) {
+            else if (cursor.y == 3 && this.editorInstance.textArea.textArea.getScrollPerc() > 0) {
                 this.editorInstance.textArea.textArea.scroll(-1);
                 this.editorInstance.screen.render();
                 // For some reason setting the y on this to 2 scrolls more 'smoothly' than 3 
