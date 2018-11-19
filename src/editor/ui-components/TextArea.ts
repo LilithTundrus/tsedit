@@ -12,7 +12,7 @@ import KeyHandler from '../KeyHandler';
 // Create the textArea textbox, where the actual text being edited will be displayed
 
 export default class TextArea {
-    
+
     // The editorInstance allows us to access features from the Editor class instance to do things
     // like change state, etc.
     private editorInstance: Editor;
@@ -150,6 +150,14 @@ export default class TextArea {
 
         this.textArea.key('right', () => {
             this.keyHandler.rightArrowHandler();
+        });
+
+        this.textArea.key('up', () => {
+            this.keyHandler.upArrowHandler();
+        });
+
+        this.textArea.key('down', () => {
+            this.keyHandler.downArrowHandler();
         });
     }
 }

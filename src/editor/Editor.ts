@@ -76,7 +76,7 @@ export default class Editor {
      */
     private startEditorBlank() {
         // Get this one working first!
-        console.log('Launching blank editor...');
+        
     }
 
     /** Start the editor in a state where the text is already provided
@@ -95,6 +95,9 @@ export default class Editor {
 
         // TODO: On change to the text, the filepath should have a * to indicate that it has not
         // been saved
+
+        // TODO: The first thing to do should be a navigable textArea, horiztonally and vertically
+        // that allows for text entry and proper flow
 
         // Set the title of the terminal window (if any) -- this will eventually take cli arguments
         // for reading a file to be edited
