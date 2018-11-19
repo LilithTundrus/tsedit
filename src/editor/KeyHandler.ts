@@ -36,6 +36,17 @@ export default class KeyHandler {
                 this.editorInstance.screen.render();
                 let lines = this.editorInstance.textArea.getVisibleLines();
                 fs.writeFileSync('./LINES.txt', lines.join('\n'));
+            } else if (cursor.x == 2 && this.editorInstance.textArea.viewOffSet == 0) {
+
+            } else {
+                // Check if the viewOffset for the textArea isn't 0
+                // if (this.editorInstance.textArea.viewOffSet > 0) {
+                    // Scroll the textArea to the left
+                    this.editorInstance.textArea.leftShiftText();
+                    this.editorInstance.screen.render();
+                    this.editorInstance.textArea.viewOffSet--;
+                    // process.exit()
+                // }
             }
         });
     }

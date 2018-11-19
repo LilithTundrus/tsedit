@@ -17,6 +17,7 @@ export default class TextArea {
     // like change state, etc.
     private editorInstance: Editor;
     private content;
+    shadowContent: string[];
     viewOffSet: number;
     textArea: blessed.Widgets.BoxElement;
     keyHandler: KeyHandler;
@@ -126,6 +127,14 @@ export default class TextArea {
             content: this.content,
         });
 
+        // This is the content that gets updated along with the content that can be seen on
+        // screen
+        // Any horizontal movement should NOT effect this array BUT any text addition,
+        // modification or removal WILL
+
+        // This may get messy but it is doable!
+        this.shadowContent = this.textArea.getLines();
+
         this.editorInstance.screen.render();
         // Construct each key listener for the textArea
         this.registerKeyListeners();
@@ -166,7 +175,11 @@ export default class TextArea {
     // This will move the view of the editor 1 character to the left, using
     // the 'shadow' version of the document
     leftShiftText() {
+        let lines = this.getVisibleLines();
 
+        lines.forEach((line, index) => {
+            this.textArea.setLine(index + this.verticalScrollOffset, this.shadowContent[index + this.verticalScrollOffset].substring(this.viewOffSet));
+        });
     }
 
     // This will move the view of the editor 1 character to the right, using
