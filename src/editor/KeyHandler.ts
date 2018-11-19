@@ -38,13 +38,13 @@ export default class KeyHandler {
                 fs.writeFileSync('./LINES.txt', lines.join('\n'));
             } else if (cursor.x == 2 && this.editorInstance.textArea.viewOffSet == 0) {
 
-            } else {
+            } else if (cursor.x == 2 && this.editorInstance.textArea.viewOffSet !== 0){
                 // Check if the viewOffset for the textArea isn't 0
                 // if (this.editorInstance.textArea.viewOffSet > 0) {
                     // Scroll the textArea to the left
+                    this.editorInstance.textArea.viewOffSet--;
                     this.editorInstance.textArea.leftShiftText();
                     this.editorInstance.screen.render();
-                    this.editorInstance.textArea.viewOffSet--;
                     // process.exit()
                 // }
             }
@@ -63,9 +63,9 @@ export default class KeyHandler {
             } else {
                 // Horiztonally scroll the text if the current line is greater than the 
                 // width of the editing window
+                this.editorInstance.textArea.viewOffSet++;
                 this.editorInstance.textArea.rightshiftText();
                 this.editorInstance.screen.render();
-                this.editorInstance.textArea.viewOffSet++;
             }
         });
     }

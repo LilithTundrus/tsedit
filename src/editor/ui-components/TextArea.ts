@@ -5,6 +5,8 @@
 import * as blessed from 'blessed';
 import Editor from '../Editor';
 import KeyHandler from '../KeyHandler';
+// Used for debugging
+import * as fs from 'fs';
 
 // This file contains one of the blessed components for constructing the UI in an effort to
 // keep this project modular
@@ -136,6 +138,7 @@ export default class TextArea {
         this.shadowContent = this.textArea.getLines();
 
         this.editorInstance.screen.render();
+        this.viewOffSet = 0;
         // Construct each key listener for the textArea
         this.registerKeyListeners();
     }
@@ -177,9 +180,18 @@ export default class TextArea {
     leftShiftText() {
         let lines = this.getVisibleLines();
 
+        fs.writeFileSync('./LEFT.txt', this.viewOffSet + '\n')
+
+        // if (this.viewOffSet !== 1) {
+        //     lines.forEach((line, index) => {
+        //         this.textArea.setLine(index + this.verticalScrollOffset, this.shadowContent[index + this.verticalScrollOffset].substring(this.viewOffSet));
+        //     });
+        // } else {
         lines.forEach((line, index) => {
             this.textArea.setLine(index + this.verticalScrollOffset, this.shadowContent[index + this.verticalScrollOffset].substring(this.viewOffSet));
         });
+        // }
+
     }
 
     // This will move the view of the editor 1 character to the right, using
@@ -187,8 +199,12 @@ export default class TextArea {
     rightshiftText() {
         let lines = this.getVisibleLines();
 
+        fs.writeFileSync('./RIGHT.txt', this.viewOffSet + '\n')
+
+
         lines.forEach((line, index) => {
             this.textArea.setLine(index + this.verticalScrollOffset, line.substring(1));
+
         });
     }
 
