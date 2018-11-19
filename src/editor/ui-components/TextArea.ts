@@ -20,6 +20,7 @@ export default class TextArea {
     private viewOffSet: number;
     textArea: blessed.Widgets.BoxElement;
     keyHandler: KeyHandler;
+    verticalScrollOffset: number = 0;
 
     constructor(editorInstance: Editor, content) {
         this.editorInstance = editorInstance;
@@ -205,7 +206,7 @@ export default class TextArea {
         let relativeBottom = this.getRelativeBottom();
         let relativeTop = this.getRelativeTop();
 
-        for (let i = relativeTop; i < relativeBottom; i++) {
+        for (let i = this.verticalScrollOffset; i < this.textArea.height; i++) {
             visibleLines.push(this.textArea.getLine(i))
         }
         return visibleLines;

@@ -49,7 +49,6 @@ export default class KeyHandler {
             if (cursor.x < this.editorInstance.screen.width - 1) {
                 this.editorInstance.program.cursorForward();
                 this.editorInstance.screen.render();
-
             }
         });
     }
