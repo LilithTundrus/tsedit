@@ -20,6 +20,12 @@ export default class KeyHandler {
         this.editorInstance = editorInstance;
     }
 
+    /* 
+    Horizontal scrolling is sort of working, 
+    next is to get BOTH horizontal AND vertical working together.... 
+    then actually being able to edit the viewable text using those scrolling methods
+    */
+
 
     mainKeyHandler() {
         // This is where all 'standard' keys go
@@ -38,15 +44,14 @@ export default class KeyHandler {
                 fs.writeFileSync('./LINES.txt', lines.join('\n'));
             } else if (cursor.x == 2 && this.editorInstance.textArea.viewOffSet == 0) {
 
-            } else if (cursor.x == 2 && this.editorInstance.textArea.viewOffSet !== 0){
+            } else if (cursor.x == 2 && this.editorInstance.textArea.viewOffSet !== 0) {
                 // Check if the viewOffset for the textArea isn't 0
-                // if (this.editorInstance.textArea.viewOffSet > 0) {
-                    // Scroll the textArea to the left
-                    this.editorInstance.textArea.viewOffSet--;
-                    this.editorInstance.textArea.leftShiftText();
-                    this.editorInstance.screen.render();
-                    // process.exit()
-                // }
+                // Scroll the textArea to the left
+                this.editorInstance.textArea.viewOffSet--;
+                this.editorInstance.textArea.leftShiftText();
+                this.editorInstance.screen.render();
+                this.editorInstance.program.cursorPos(cursor.y - 1, 2);
+
             }
         });
     }
@@ -66,6 +71,8 @@ export default class KeyHandler {
                 this.editorInstance.textArea.viewOffSet++;
                 this.editorInstance.textArea.rightshiftText();
                 this.editorInstance.screen.render();
+                // Put the cursor where it should be (at the end) of the curent line
+                this.editorInstance.program.cursorPos(cursor.y - 1, this.editorInstance.screen.width - 3);
             }
         });
     }
