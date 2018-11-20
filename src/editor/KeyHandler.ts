@@ -41,7 +41,7 @@ export default class KeyHandler {
                 this.editorInstance.program.cursorBackward();
                 this.editorInstance.screen.render();
                 let lines = this.editorInstance.textArea.getVisibleLines();
-                fs.writeFileSync('./LINES.txt', lines.join('\n'));
+                // fs.writeFileSync('./LINES.txt', lines.join('\n'));
             } else if (cursor.x == 2 && this.editorInstance.textArea.viewOffSet == 0) {
 
             } else if (cursor.x == 2 && this.editorInstance.textArea.viewOffSet !== 0) {
@@ -92,6 +92,9 @@ export default class KeyHandler {
             // Scroll the text up by one line
             else if (cursor.y == 3 && this.editorInstance.textArea.textArea.getScrollPerc() > 0) {
                 this.editorInstance.textArea.textArea.scroll(-1);
+
+
+
                 this.editorInstance.screen.render();
                 // For some reason setting the y on this to 2 scrolls more 'smoothly' than 3 
                 // (less cursor jank)
@@ -119,6 +122,10 @@ export default class KeyHandler {
             else if (cursor.y == this.editorInstance.screen.height - 1) {
                 this.editorInstance.textArea.textArea.scroll(1);
                 this.editorInstance.screen.render();
+
+                // Make sure that the next line is on the right horizontal scroll index
+                this.editorInstance.textArea.reformTextDownArrow();
+
                 // For some reason the screen - 2 is what sets the cursor to the bottom position 
                 // that's needed
                 let relativeBottomHeight = this.editorInstance.screen.height - 2;

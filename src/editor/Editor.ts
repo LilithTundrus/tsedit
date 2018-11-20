@@ -93,6 +93,8 @@ export default class Editor {
             return process.exit(0);
         }
 
+        // TODO: Document literally everything going on!!!
+
         // TODO: On change to the text, the filepath should have a * to indicate that it has not
         // been saved
 

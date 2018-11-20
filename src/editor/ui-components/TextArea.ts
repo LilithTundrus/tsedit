@@ -208,6 +208,19 @@ export default class TextArea {
         });
     }
 
+    reformTextUpArrow() {
+
+    }
+
+    reformTextDownArrow() {
+        let visibleLines = this.getVisibleLines();
+
+        let lastLine = visibleLines[visibleLines.length - 1];
+
+        this.textArea.setLine(visibleLines.length - 1 + this.verticalScrollOffset, this.shadowContent[visibleLines.length - 1 + this.verticalScrollOffset].substring(this.viewOffSet));
+
+    }
+
     getViewOffset() {
         return this.viewOffSet;
     }
