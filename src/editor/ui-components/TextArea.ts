@@ -209,16 +209,15 @@ export default class TextArea {
     }
 
     reformTextUpArrow() {
+        let visibleLines = this.getVisibleLines();
 
+        this.textArea.setLine(this.verticalScrollOffset - 1, this.shadowContent[this.verticalScrollOffset - 1].substring(this.viewOffSet));
     }
 
     reformTextDownArrow() {
         let visibleLines = this.getVisibleLines();
 
-        let lastLine = visibleLines[visibleLines.length - 1];
-
-        this.textArea.setLine(visibleLines.length - 1 + this.verticalScrollOffset, this.shadowContent[visibleLines.length - 1 + this.verticalScrollOffset].substring(this.viewOffSet));
-
+        this.textArea.setLine(visibleLines.length + this.verticalScrollOffset, this.shadowContent[visibleLines.length + this.verticalScrollOffset].substring(this.viewOffSet));
     }
 
     getViewOffset() {

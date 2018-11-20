@@ -93,7 +93,9 @@ export default class KeyHandler {
             else if (cursor.y == 3 && this.editorInstance.textArea.textArea.getScrollPerc() > 0) {
                 this.editorInstance.textArea.textArea.scroll(-1);
 
-
+                // Make sure that the previous line is on the right horizontal scroll index
+                this.editorInstance.textArea.reformTextUpArrow();
+                this.editorInstance.screen.render();
 
                 this.editorInstance.screen.render();
                 // For some reason setting the y on this to 2 scrolls more 'smoothly' than 3 
@@ -125,6 +127,7 @@ export default class KeyHandler {
 
                 // Make sure that the next line is on the right horizontal scroll index
                 this.editorInstance.textArea.reformTextDownArrow();
+                this.editorInstance.screen.render();
 
                 // For some reason the screen - 2 is what sets the cursor to the bottom position 
                 // that's needed
@@ -132,6 +135,7 @@ export default class KeyHandler {
                 this.editorInstance.program.cursorPos(relativeBottomHeight, cursor.x - 1);
                 this.editorInstance.screen.render();
                 this.editorInstance.textArea.verticalScrollOffset++;
+                this.editorInstance.screen.render();
             }
         });
     }
