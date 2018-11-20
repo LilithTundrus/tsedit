@@ -5,6 +5,7 @@
 import * as blessed from 'blessed';
 import Editor from '../Editor';
 import KeyHandler from '../KeyHandler';
+import customKeys from '../custom-keys';
 // Used for debugging
 import * as fs from 'fs';
 
@@ -178,6 +179,21 @@ export default class TextArea {
         this.textArea.key('down', () => {
             this.keyHandler.downArrowHandler();
         });
+
+        this.textArea.on('keypress', (ch, key) => {
+            // Return on undefined, these are keys we can handle elsewhere 
+            // (undefined means it isn't a display character)
+            if (ch == undefined) return;
+            // If the key is already handled elsewhere, return
+            else if (customKeys.has(key.name)) return;
+            // This shouldn't be needed, but the \r code sometimes gets into here
+            if (ch === '\r') return;
+
+            // Determine where to insert the character that was entered based on the cursor position
+            // This callback returns an err and data object, the data object has the x/y position of the cursor
+                return this.keyHandler.mainKeyHandler(ch);
+            this.editorInstance.screen.render();
+        });
     }
 
     // This will move the view of the editor 1 character to the left, using
@@ -259,7 +275,6 @@ export default class TextArea {
         return relativeTop;
     }
 
-
     /** Get the relative bottom number for the screen
      * @returns
      * @memberof TextArea
@@ -275,6 +290,10 @@ export default class TextArea {
         return relativeBottom;
     }
 
+    /** Return the visible lines of the textArea as an array
+     * @returns
+     * @memberof TextArea
+     */
     getVisibleLines() {
         let visibleLines = [];
         // Relative height of the textArea itself

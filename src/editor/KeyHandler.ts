@@ -20,8 +20,16 @@ export default class KeyHandler {
         this.editorInstance = editorInstance;
     }
 
-    mainKeyHandler() {
+    mainKeyHandler(character) {
         // This is where all 'standard' keys go
+        this.editorInstance.program.getCursor((err, cursor) => {
+
+            if (cursor.x < screen.width - 1) {
+
+            } else {
+                // Shift the horizontal scroll 1 to the right and add the character
+            }
+        });
     }
 
     leftArrowHandler() {
@@ -31,20 +39,20 @@ export default class KeyHandler {
             // Ignore errors until a proper error system is put in place
             if (err) return;
             if (cursor.x > 2) {
+                // If the cursor is not at the start of the line, move it backwards one
                 this.editorInstance.program.cursorBackward();
                 this.editorInstance.screen.render();
-                let lines = this.editorInstance.textArea.getVisibleLines();
-                // fs.writeFileSync('./LINES.txt', lines.join('\n'));
             } else if (cursor.x == 2 && this.editorInstance.textArea.viewOffSet == 0) {
-
+                // Do nothing (for now)
             } else if (cursor.x == 2 && this.editorInstance.textArea.viewOffSet !== 0) {
                 // Check if the viewOffset for the textArea isn't 0
-                // Scroll the textArea to the left
+                // Scroll the textArea to the left by 1
                 this.editorInstance.textArea.viewOffSet--;
                 this.editorInstance.textArea.leftShiftText();
                 this.editorInstance.screen.render();
+                // Keep the cursor right against the left bound of the textArea
+                // (this can sometimes get moved due to the redraw of the text)
                 this.editorInstance.program.cursorPos(cursor.y - 1, 2);
-
             }
         });
     }
@@ -56,16 +64,19 @@ export default class KeyHandler {
             // Ignore errors until a proper error system is put in place
             if (err) return;
             if (cursor.x < this.editorInstance.screen.width - 1) {
+                // If the cursor is not at the end of the line, move it forward one
                 this.editorInstance.program.cursorForward();
                 this.editorInstance.screen.render();
             } else {
-                // Horiztonally scroll the text if the current line is greater than the 
+                // Horiztonally scroll the text right by 1 if the current line is greater than the
                 // width of the editing window
                 this.editorInstance.textArea.viewOffSet++;
                 this.editorInstance.textArea.rightshiftText();
                 this.editorInstance.screen.render();
-                // Put the cursor where it should be (at the end) of the curent line
-                this.editorInstance.program.cursorPos(cursor.y - 1, this.editorInstance.screen.width - 3);
+                // Keep the cursor right against the right bound of the textArea
+                // (this can sometimes get moved due to the redraw of the text)
+                let screenWidthWithUIOffsets = this.editorInstance.screen.width - 3;
+                this.editorInstance.program.cursorPos(cursor.y - 1, screenWidthWithUIOffsets);
             }
         });
     }
@@ -79,22 +90,25 @@ export default class KeyHandler {
 
             // This keeps the cursor in top bound of the editing window plus the menubar height
             if (cursor.y > 3) {
+                // If the cursor isn't at the top of the textArea, move it up by one
                 this.editorInstance.program.cursorUp();
                 this.editorInstance.screen.render();
             }
             // Scroll the text up by one line
             else if (cursor.y == 3 && this.editorInstance.textArea.textArea.getScrollPerc() > 0) {
+                // Scroll the textArea's visible contents up by one
                 this.editorInstance.textArea.textArea.scroll(-1);
 
                 // Make sure that the previous line is on the right horizontal scroll index
                 this.editorInstance.textArea.reformTextUpArrow();
                 this.editorInstance.screen.render();
 
-                this.editorInstance.screen.render();
+                // Keep the cursor in its previous position
                 // For some reason setting the y on this to 2 scrolls more 'smoothly' than 3 
                 // (less cursor jank)
                 this.editorInstance.program.cursorPos(2, cursor.x - 1);
                 this.editorInstance.screen.render();
+                // Reduce the verticalScrollOffset by one to match the blessed scroll function
                 this.editorInstance.textArea.verticalScrollOffset--;
             }
         });
@@ -110,10 +124,11 @@ export default class KeyHandler {
             // This visually keeps the cursor in bottom bound of the editing window,
             // plus the statusbar height
             if (cursor.y < this.editorInstance.screen.height - 1) {
+                // If the cursor isn't at the bottom of the textArea, move it down by one
                 this.editorInstance.program.cursorDown();
                 this.editorInstance.screen.render();
             }
-            // Scroll the text down by one
+            // Scroll the text down by one if the cursor is at the bottom of the textArea
             else if (cursor.y == this.editorInstance.screen.height - 1) {
                 this.editorInstance.textArea.textArea.scroll(1);
                 this.editorInstance.screen.render();
@@ -122,13 +137,14 @@ export default class KeyHandler {
                 this.editorInstance.textArea.reformTextDownArrow();
                 this.editorInstance.screen.render();
 
-                // For some reason the screen - 2 is what sets the cursor to the bottom position 
-                // that's needed
+                // Keep the cursor in its previous position
+                // For some reason setting the y on this to 2 scrolls more 'smoothly' than 3 
+                // (less cursor jank)
                 let relativeBottomHeight = this.editorInstance.screen.height - 2;
                 this.editorInstance.program.cursorPos(relativeBottomHeight, cursor.x - 1);
                 this.editorInstance.screen.render();
+                // Increase the verticalScrollOffset by one to match the blessed scroll function
                 this.editorInstance.textArea.verticalScrollOffset++;
-                this.editorInstance.screen.render();
             }
         });
     }
