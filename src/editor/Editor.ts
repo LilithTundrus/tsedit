@@ -76,7 +76,7 @@ export default class Editor {
      */
     private startEditorBlank() {
         // Get this one working first!
-        
+
     }
 
     /** Start the editor in a state where the text is already provided
@@ -119,7 +119,7 @@ export default class Editor {
         this.screen.program.getCursor((err, data) => {
             this.screen.program.cursorUp(this.screen.height);
             this.screen.program.cursorBackward(this.screen.width);
-            // Put the cursor at line 1 column one of the editing window
+            // Put the cursor at line 1, column 1 of the editing window
             this.screen.program.cursorForward(1);
             this.screen.program.cursorDown(2);
             this.screen.render();
@@ -131,4 +131,8 @@ export default class Editor {
 
     // TODO: Things that need to be shared across UI components should go here
     // Stuff like, getting and setting the state of the editor/etc.
+
+    setWindowFilePath(newFilePath: string) {
+        this.screen.title = `TS-EDIT - ${newFilePath}`;
+    }
 }

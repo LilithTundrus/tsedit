@@ -19,10 +19,15 @@ export default class TextArea {
     // like change state, etc.
     private editorInstance: Editor;
     private content;
+    // The shadowContent will be used to update the actual text being edited
+    // For example, any time a line's content is change, it will first occur
+    // in the shadow content and THEN be visually updated on the screen.
     shadowContent: string[];
+    // Used to store the offset of the horizontal view of the text being edited
     viewOffSet: number;
     textArea: blessed.Widgets.BoxElement;
     keyHandler: KeyHandler;
+    // Used to store the vertical offset from the first line
     verticalScrollOffset: number = 0;
 
     constructor(editorInstance: Editor, content) {
@@ -138,6 +143,7 @@ export default class TextArea {
         this.shadowContent = this.textArea.getLines();
 
         this.editorInstance.screen.render();
+        // Set the viewOffset to zero to prevent NaN calculations in certain situations
         this.viewOffSet = 0;
         // Construct each key listener for the textArea
         this.registerKeyListeners();
@@ -148,13 +154,12 @@ export default class TextArea {
      * @memberof TextArea
      */
     private registerKeyListeners() {
+
         // Quit on Control-W
         // TODO: This should be aware of whether or not the editor has a file that isn't saved/etc.
         this.textArea.key(['C-w'], () => {
-
-            // Have this read the content of the new file vs the old (could be challenging depending
-            // on if the editor started with a file or not)
-
+            // Have this read the content of the new file vs the old 
+            // (could be challenging depending on if the editor started with a file or not)
             return process.exit(0);
         });
 
@@ -178,46 +183,53 @@ export default class TextArea {
     // This will move the view of the editor 1 character to the left, using
     // the 'shadow' version of the document
     leftShiftText() {
+        // Get all currently visible lines as an array
         let lines = this.getVisibleLines();
 
-        fs.writeFileSync('./LEFT.txt', this.viewOffSet + '\n')
-
-        // if (this.viewOffSet !== 1) {
-        //     lines.forEach((line, index) => {
-        //         this.textArea.setLine(index + this.verticalScrollOffset, this.shadowContent[index + this.verticalScrollOffset].substring(this.viewOffSet));
-        //     });
-        // } else {
         lines.forEach((line, index) => {
-            this.textArea.setLine(index + this.verticalScrollOffset, this.shadowContent[index + this.verticalScrollOffset].substring(this.viewOffSet));
+            // Current line index is the iterated index plus the vertical scroll offset
+            let currentLineIndex = index + this.verticalScrollOffset;
+            // The 'true' text is the same index in the shadowContent array
+            let trueText = this.shadowContent[currentLineIndex];
+            // Set the current line to the 'true' text by 1 to the left
+            this.textArea.setLine(currentLineIndex, trueText.substring(this.viewOffSet));
         });
-        // }
-
     }
 
     // This will move the view of the editor 1 character to the right, using
     // the 'shadow' version of the document
     rightshiftText() {
+        // Get all currently visible lines as an array
         let lines = this.getVisibleLines();
 
-        fs.writeFileSync('./RIGHT.txt', this.viewOffSet + '\n')
-
-
         lines.forEach((line, index) => {
+            // Set the currently iterated line to the line minus one character of the string
+            // The right shifting of text doesn't need to know what the true text is (for now)
             this.textArea.setLine(index + this.verticalScrollOffset, line.substring(1));
-
         });
     }
 
+    // This function ensures that on a vertical scroll, the next line is still on the right
+    // horizontal view offset
     reformTextUpArrow() {
+        // Get the previous line index to what is currently visible
         let previousVisibleLineIndex = this.verticalScrollOffset - 1;
+        // Get the 'true' text of the next line, plus the view offset
         let trueContent = this.shadowContent[previousVisibleLineIndex].substring(this.viewOffSet);
+        // Set the line to the 'true' content before it is seen
         this.textArea.setLine(previousVisibleLineIndex, trueContent);
     }
 
+    // This function ensures that on a vertical scroll, the previous line is still on the right
+    // horizontal view offset
     reformTextDownArrow() {
+        // Get all currently visible lines as an array
         let visibleLines = this.getVisibleLines();
+        // Get the next line index to what is currently visible
         let nextVisibleLineIndex = visibleLines.length + this.verticalScrollOffset;
+        // Get the 'true' text of the next line, plus the view offset
         let trueContent = this.shadowContent[nextVisibleLineIndex].substring(this.viewOffSet);
+        // Set the line to the 'true' content before it is seen
         this.textArea.setLine(nextVisibleLineIndex, trueContent);
     }
 
@@ -229,11 +241,17 @@ export default class TextArea {
         this.viewOffSet = newOffset;
     }
 
-
+    /** Get the relative top number for the screen
+     * @returns
+     * @memberof TextArea
+     */
     getRelativeTop() {
+        // Attempts to get the current scroll index of the textArea
         let relativeBottom = this.textArea.getScroll();
+        // Top of the scren should be the bottom of the screen minus the height
         let relativeTop = relativeBottom - this.textArea.height;
 
+        // if the number is zero, then there is no offset to be calculated, it is zero (hopefully)
         if (relativeBottom == 0) {
             relativeTop = 0;
         }
@@ -242,8 +260,15 @@ export default class TextArea {
     }
 
 
+    /** Get the relative bottom number for the screen
+     * @returns
+     * @memberof TextArea
+     */
     getRelativeBottom() {
+        // Attempts to get the current scroll index of the textArea
         let relativeBottom: any = this.textArea.getScroll();
+        // If this number is zero so the textArea is not scrolling,
+        // therefore it is the height of the textArea (hopefully)
         if (relativeBottom == 0) {
             relativeBottom = this.textArea.height;
         }
@@ -252,9 +277,14 @@ export default class TextArea {
 
     getVisibleLines() {
         let visibleLines = [];
+        // Relative height of the textArea itself
+        let textAreaRelativeHeight = this.textArea.height - 2;
+        // Offset is just shorthand for the class's vertical offset
+        let offset = this.verticalScrollOffset;
 
-        for (let i = this.verticalScrollOffset; i < this.textArea.height - 2 + this.verticalScrollOffset; i++) {
-            visibleLines.push(this.textArea.getLine(i))
+        for (let i = offset; i < textAreaRelativeHeight + offset; i++) {
+            // Push the current line to the temporary array
+            visibleLines.push(this.textArea.getLine(i));
         }
         return visibleLines;
     }
