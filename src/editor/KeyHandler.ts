@@ -20,13 +20,6 @@ export default class KeyHandler {
         this.editorInstance = editorInstance;
     }
 
-    /* 
-    Horizontal scrolling is sort of working, 
-    next is to get BOTH horizontal AND vertical working together.... 
-    then actually being able to edit the viewable text using those scrolling methods
-    */
-
-
     mainKeyHandler() {
         // This is where all 'standard' keys go
     }
