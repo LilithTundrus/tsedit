@@ -20,33 +20,40 @@ export default class KeyHandler {
         this.editorInstance = editorInstance;
     }
 
+    // The main keyyHandler, accepts any standard character that's not handled elsewhere.
+    // The cursor is aquired through an argument to prevent event listener overflow
     mainKeyHandler(character, cursor) {
-        // This is where all 'standard' keys go
+        // This is where all 'standard' keys go (keys not handled elsewhere)
 
         // ON EACH OF THESE, THE SHADOW LINE MUST BE UPDATED AS WELL
-        // TODO: Fix this up, a lot of things like the cursor reset aren't working
+        // TODO: Refactor and comment this function
         if (cursor.x < this.editorInstance.screen.width - 1) {
-            // Insert the character received
 
-            let currentLineScrollOffset = this.editorInstance.textArea.calculateScrollingOffset(cursor);
+            // Variable to get the current offset number for the line the cursor is on,
+            // including the scrolling position of the textArea
+            let currentLineOffset = this.editorInstance.textArea.calculateScrollingOffset(cursor);
 
             // Get the line that the cursor is sitting on minus the borders of the UI/screen
-            let currentLineText = this.editorInstance.textArea.textArea.getLine(currentLineScrollOffset);
+            let currentLineText = this.editorInstance.textArea.textArea.getLine(currentLineOffset);
 
-            // If there's no text to begin with, this should be what avoids weird text ghosting onto a new line
+            // If there's no text to begin with, this should be what avoids
+            // text ghosting onto a new line
             if (cursor.x == 2 && currentLineText.length < 1) {
                 // Add the character to the beginning of the line
-                this.editorInstance.textArea.textArea.setLine(currentLineScrollOffset, character);
+                this.editorInstance.textArea.textArea.setLine(currentLineOffset, character);
                 // Render the text change
                 this.editorInstance.screen.render();
             }
-            // If cursor is at the beginning of the line (move the rest of the text forward and insert the character)
+            // If cursor is at the beginning of the line, this will
+            // move the rest of the text forward and insert the character
             else if (cursor.x == 2 && currentLineText.length > 1) {
                 // Add the character to the beginning of the line
-                this.editorInstance.textArea.textArea.setLine(currentLineScrollOffset, character + currentLineText);
+                let newLineText = character + currentLineText;
+                this.editorInstance.textArea.textArea.setLine(currentLineOffset, newLineText);
                 // Render the text change
                 this.editorInstance.screen.render();
-                // Offset the auto-cursor-restore to move the cursor back to the last position it was in
+                // Offset the auto-cursor-restore to move the cursor back to the 
+                // last position it was in
                 // NOTE: this does not work on line longer then the screen's width
                 this.editorInstance.program.cursorPos(cursor.y - 1, cursor.x);
                 // Render the cursor change
@@ -54,12 +61,17 @@ export default class KeyHandler {
             }
             // If the cursor is at the end
             else if (cursor.x >= currentLineText.length + 1) {
-                // Add the character to the end of the line, the cursor auto-renders and moves forward on its own in this case
-                this.editorInstance.textArea.textArea.setLine(currentLineScrollOffset, currentLineText + character);
+                // Add the character to the end of the line, the cursor auto-renders
+                // and moves forward on its own in this case
+                let newLineText = currentLineText + character;
+                this.editorInstance.textArea.textArea.setLine(currentLineOffset, newLineText);
             }
             // If the cursor is somehwere in the middle (its an insert)
             else {
-                this.editorInstance.textArea.textArea.setLine(currentLineScrollOffset, currentLineText.substring(0, cursor.x - 2) + character + currentLineText.substring(cursor.x - 2));
+                let startingString = currentLineText.substring(0, cursor.x - 2);
+                let endingString = currentLineText.substring(cursor.x - 2);
+                let newLineText = startingString + character + endingString;
+                this.editorInstance.textArea.textArea.setLine(currentLineOffset, newLineText);
                 // Render the text change
                 this.editorInstance.screen.render();
                 this.editorInstance.program.cursorPos(cursor.y - 1, cursor.x);
@@ -67,7 +79,7 @@ export default class KeyHandler {
                 this.editorInstance.screen.render();
             }
 
-            // Always render the screen at the end of the function to be sure the changes made correctly show
+            // Always render the screen to be sure the changes correctly show
             this.editorInstance.screen.render();
         } else {
             // Shift the horizontal scroll 1 to the right and add the character
