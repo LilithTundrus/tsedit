@@ -24,6 +24,7 @@ export default class KeyHandler {
         // This is where all 'standard' keys go
 
         // ON EACH OF THESE, THE SHADOW LINE MUST BE UPDATED AS WELL
+        // TODO: Fix this up, a lot of things like the cursor reset aren't working
         if (cursor.x < this.editorInstance.screen.width - 1) {
             // Insert the character received
 
@@ -32,7 +33,7 @@ export default class KeyHandler {
             // Get the line that the cursor is sitting on minus the borders of the UI/screen
             let currentLineText = this.editorInstance.textArea.textArea.getLine(currentLineScrollOffset);
 
-            // If there's no text to begin with (this should be what avoids weird text ghosting onto a new line)
+            // If there's no text to begin with, this should be what avoids weird text ghosting onto a new line
             if (cursor.x == 2 && currentLineText.length < 1) {
                 // Add the character to the beginning of the line
                 this.editorInstance.textArea.textArea.setLine(currentLineScrollOffset, character);
@@ -46,7 +47,8 @@ export default class KeyHandler {
                 // Render the text change
                 this.editorInstance.screen.render();
                 // Offset the auto-cursor-restore to move the cursor back to the last position it was in
-                this.editorInstance.program.cursorBackward(currentLineText.length);
+                // NOTE: this does not work on line longer then the screen's width
+                this.editorInstance.program.cursorPos(cursor.y - 1, cursor.x);
                 // Render the cursor change
                 this.editorInstance.screen.render();
             }
@@ -60,7 +62,7 @@ export default class KeyHandler {
                 this.editorInstance.textArea.textArea.setLine(currentLineScrollOffset, currentLineText.substring(0, cursor.x - 2) + character + currentLineText.substring(cursor.x - 2));
                 // Render the text change
                 this.editorInstance.screen.render();
-                this.editorInstance.program.cursorBackward(currentLineText.length - currentLineText.substring(0, cursor.x - 1).length + 1)
+                this.editorInstance.program.cursorPos(cursor.y - 1, cursor.x);
                 // Render the cursor change
                 this.editorInstance.screen.render();
             }
