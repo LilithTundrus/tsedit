@@ -37,6 +37,7 @@ export default class KeyHandler {
 
             // If there's no text to begin with, this check should avoid text going onto a new line
             if (cursor.x == 2 && currentLineText.length < 1) {
+
                 // Add the character to the beginning of the line
                 this.editorInstance.textArea.textArea.setLine(currentLineOffset, character);
                 // Render the text change
@@ -47,7 +48,12 @@ export default class KeyHandler {
             // move the rest of the text forward and insert the character
             else if (cursor.x == 2 && currentLineText.length > 1) {
                 // Add the character to the beginning of the line
+
                 let newLineText = character + currentLineText;
+
+                // Update the real data with the given character
+                this.editorInstance.textArea.shadowContent[currentLineOffset] = newLineText;
+
                 this.editorInstance.textArea.textArea.setLine(currentLineOffset, newLineText);
                 // Render the text change
                 this.editorInstance.screen.render();
@@ -110,6 +116,9 @@ export default class KeyHandler {
     rightArrowHandler() {
         // This callback returns an err and data object, the data object has the x/y 
         // position of the cursor
+
+        // fs.writeFileSync('./shadow.txt', this.editorInstance.textArea.shadowContent.join('\n'));
+
         this.editorInstance.program.getCursor((err, cursor) => {
             // Ignore errors until a proper error system is put in place
             if (err) return;
@@ -182,6 +191,8 @@ export default class KeyHandler {
             else if (cursor.y == this.editorInstance.screen.height - 1) {
                 this.editorInstance.textArea.textArea.scroll(1);
                 this.editorInstance.screen.render();
+
+                // TODO: Fix a crash that occurs when on the last line of the text being edited
 
                 // Make sure that the next line is on the right horizontal scroll index
                 this.editorInstance.textArea.reformTextDownArrow();
