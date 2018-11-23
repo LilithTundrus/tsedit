@@ -21,28 +21,27 @@ export default class KeyHandler {
     }
 
     // The main keyyHandler, accepts any standard character that's not handled elsewhere.
-    // The cursor is aquired through an argument to prevent event listener overflow
+    // The cursor is aquired through an argument to prevent event listener overflow from blessed
     mainKeyHandler(character, cursor) {
         // This is where all 'standard' keys go (keys not handled elsewhere)
 
         // ON EACH OF THESE, THE SHADOW LINE MUST BE UPDATED AS WELL
-        // TODO: Refactor and comment this function
         if (cursor.x < this.editorInstance.screen.width - 1) {
 
             // Variable to get the current offset number for the line the cursor is on,
             // including the scrolling position of the textArea
             let currentLineOffset = this.editorInstance.textArea.calculateScrollingOffset(cursor);
 
-            // Get the line that the cursor is sitting on minus the borders of the UI/screen
+            // Get the line of text that the cursor is sitting on minus the borders of the screen
             let currentLineText = this.editorInstance.textArea.textArea.getLine(currentLineOffset);
 
-            // If there's no text to begin with, this should be what avoids
-            // text ghosting onto a new line
+            // If there's no text to begin with, this check should avoid text going onto a new line
             if (cursor.x == 2 && currentLineText.length < 1) {
                 // Add the character to the beginning of the line
                 this.editorInstance.textArea.textArea.setLine(currentLineOffset, character);
                 // Render the text change
                 this.editorInstance.screen.render();
+                // No cursor shift is needed since it is automatic on this case
             }
             // If cursor is at the beginning of the line, this will
             // move the rest of the text forward and insert the character
@@ -52,12 +51,9 @@ export default class KeyHandler {
                 this.editorInstance.textArea.textArea.setLine(currentLineOffset, newLineText);
                 // Render the text change
                 this.editorInstance.screen.render();
-                // Offset the auto-cursor-restore to move the cursor back to the 
-                // last position it was in
-                // NOTE: this does not work on line longer then the screen's width
+                // Offset the auto-cursor-restore to move the cursor back to the
+                // last position it was in before the text change
                 this.editorInstance.program.cursorPos(cursor.y - 1, cursor.x);
-                // Render the cursor change
-                this.editorInstance.screen.render();
             }
             // If the cursor is at the end
             else if (cursor.x >= currentLineText.length + 1) {
@@ -65,6 +61,7 @@ export default class KeyHandler {
                 // and moves forward on its own in this case
                 let newLineText = currentLineText + character;
                 this.editorInstance.textArea.textArea.setLine(currentLineOffset, newLineText);
+                // No cursor shift is needed since it is automatic on this case
             }
             // If the cursor is somehwere in the middle (its an insert)
             else {
@@ -74,12 +71,11 @@ export default class KeyHandler {
                 this.editorInstance.textArea.textArea.setLine(currentLineOffset, newLineText);
                 // Render the text change
                 this.editorInstance.screen.render();
+                // Move the cursor back to where it was before the text was added
                 this.editorInstance.program.cursorPos(cursor.y - 1, cursor.x);
-                // Render the cursor change
-                this.editorInstance.screen.render();
             }
 
-            // Always render the screen to be sure the changes correctly show
+            // Always render the screen to be sure the changes made correctly appear
             this.editorInstance.screen.render();
         } else {
             // Shift the horizontal scroll 1 to the right and add the character
