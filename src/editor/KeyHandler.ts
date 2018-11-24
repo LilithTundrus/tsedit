@@ -37,7 +37,8 @@ export default class KeyHandler {
 
             // If there's no text to begin with, this check should avoid text going onto a new line
             if (cursor.x == 2 && currentLineText.length < 1) {
-
+                // Update the real data with the given character
+                this.editorInstance.textArea.shadowContent[currentLineOffset] = character;
                 // Add the character to the beginning of the line
                 this.editorInstance.textArea.textArea.setLine(currentLineOffset, character);
                 // Render the text change
@@ -47,13 +48,14 @@ export default class KeyHandler {
             // If cursor is at the beginning of the line, this will
             // move the rest of the text forward and insert the character
             else if (cursor.x == 2 && currentLineText.length > 1) {
-                // Add the character to the beginning of the line
 
+                // Add the character to the beginning of the line
                 let newLineText = character + currentLineText;
 
                 // Update the real data with the given character
                 this.editorInstance.textArea.shadowContent[currentLineOffset] = newLineText;
 
+                // Update the viewable line with the given character
                 this.editorInstance.textArea.textArea.setLine(currentLineOffset, newLineText);
                 // Render the text change
                 this.editorInstance.screen.render();
@@ -67,14 +69,26 @@ export default class KeyHandler {
                 // and moves forward on its own in this case
                 let newLineText = currentLineText + character;
                 this.editorInstance.textArea.textArea.setLine(currentLineOffset, newLineText);
+
+                // Update the real data with the given character
+                this.editorInstance.textArea.shadowContent[currentLineOffset] = newLineText;
+
                 // No cursor shift is needed since it is automatic on this case
             }
-            // If the cursor is somehwere in the middle (its an insert)
+            // If the cursor is somehwere in the middle (it's an insert)
             else {
+                // String portion BEFORE the insert
                 let startingString = currentLineText.substring(0, cursor.x - 2);
+                // String portion AFTER the insert
                 let endingString = currentLineText.substring(cursor.x - 2);
+
+                // Add the character in between the 2 strings
                 let newLineText = startingString + character + endingString;
                 this.editorInstance.textArea.textArea.setLine(currentLineOffset, newLineText);
+
+                // Update the real data with the given character
+                this.editorInstance.textArea.shadowContent[currentLineOffset] = newLineText;
+
                 // Render the text change
                 this.editorInstance.screen.render();
                 // Move the cursor back to where it was before the text was added

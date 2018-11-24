@@ -193,8 +193,16 @@ export default class TextArea {
             // This callback returns an err and data object, the data object has the x/y position of the cursor
             this.editorInstance.program.getCursor((err, cursor) => {
 
-            return this.keyHandler.mainKeyHandler(ch, cursor);
+                return this.keyHandler.mainKeyHandler(ch, cursor);
             })
+        });
+
+        // Test file writing function
+        // TODO: This should be aware of whether or not the editor has a file already/etc.
+        this.textArea.key(['C-s'], () => {
+            // TODO: this needs to be doing a lot more eventually
+            // Remove the cursor from the text that for SOME REASON shows up
+            fs.writeFileSync('test', this.textArea.content.replace('', ''));
         });
     }
 
