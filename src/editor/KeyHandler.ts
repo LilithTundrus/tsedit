@@ -22,6 +22,8 @@ export default class KeyHandler {
 
     // The main keyyHandler, accepts any standard character that's not handled elsewhere.
     // The cursor is aquired through an argument to prevent event listener overflow from blessed
+
+    // TODO: This isn't working right when a horizontal scrolling offset is being used, fix!
     mainKeyHandler(character, cursor) {
         // This is where all 'standard' keys go (keys not handled elsewhere)
 
@@ -34,6 +36,8 @@ export default class KeyHandler {
 
             // Get the line of text that the cursor is sitting on minus the borders of the screen
             let currentLineText = this.editorInstance.textArea.textArea.getLine(currentLineOffset);
+
+            let shadowLineText = this.editorInstance.textArea.shadowContent[currentLineOffset];
 
             // If there's no text to begin with, this check should avoid text going onto a new line
             if (cursor.x == 2 && currentLineText.length < 1) {
@@ -53,7 +57,14 @@ export default class KeyHandler {
                 let newLineText = character + currentLineText;
 
                 // Update the real data with the given character
-                this.editorInstance.textArea.shadowContent[currentLineOffset] = newLineText;
+                if (this.editorInstance.textArea.viewOffSet > 0) {
+                    // Make sure the insert occurs correctly, even when the view is shifted
+                    this.editorInstance.textArea.shadowContent[currentLineOffset] =
+                        shadowLineText.slice(0, this.editorInstance.textArea.viewOffSet) + character +
+                        shadowLineText.slice(this.editorInstance.textArea.viewOffSet)
+                } else {
+                    this.editorInstance.textArea.shadowContent[currentLineOffset] = newLineText;
+                }
 
                 // Update the viewable line with the given character
                 this.editorInstance.textArea.textArea.setLine(currentLineOffset, newLineText);
@@ -130,9 +141,6 @@ export default class KeyHandler {
     rightArrowHandler() {
         // This callback returns an err and data object, the data object has the x/y 
         // position of the cursor
-
-        // fs.writeFileSync('./shadow.txt', this.editorInstance.textArea.shadowContent.join('\n'));
-
         this.editorInstance.program.getCursor((err, cursor) => {
             // Ignore errors until a proper error system is put in place
             if (err) return;
@@ -141,6 +149,7 @@ export default class KeyHandler {
                 this.editorInstance.program.cursorForward();
                 this.editorInstance.screen.render();
             } else {
+                // TODO: prevent the cursor from moving past the current line's text length
                 // Horiztonally scroll the text right by 1 if the current line is greater than the
                 // width of the editing window
                 this.editorInstance.textArea.viewOffSet++;

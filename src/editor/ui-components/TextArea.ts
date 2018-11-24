@@ -202,7 +202,7 @@ export default class TextArea {
         this.textArea.key(['C-s'], () => {
             // TODO: this needs to be doing a lot more eventually
             // Remove the cursor from the text that for SOME REASON shows up
-            fs.writeFileSync('test', this.textArea.content.replace('', ''));
+            fs.writeFileSync('test', this.editorInstance.textArea.shadowContent.join('\n').replace('', ''));
         });
     }
 
