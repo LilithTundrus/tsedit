@@ -26,7 +26,8 @@ export default class KeyHandler {
     // TODO: When in a scroll offset and the text is shorter than the current offset and a character
     // is inserted on that line, make sure the view snaps back to that line
 
-    // TODO: TEST THIS A LOT
+    // TODO: TEST ALL FUNCTION THIS A LOT
+
     mainKeyHandler(character, cursor) {
         // This is where all 'standard' keys go (keys not handled elsewhere)
 
@@ -115,8 +116,8 @@ export default class KeyHandler {
                 if (this.editorInstance.textArea.viewOffSet > 0) {
                     // Insert the character into the string with the viewoffset
                     this.editorInstance.textArea.shadowContent[currentLineOffset] =
-                        shadowLineText.slice(0, this.editorInstance.textArea.viewOffSet) + character +
-                        shadowLineText.slice(this.editorInstance.textArea.viewOffSet)
+                        shadowLineText.slice(0, this.editorInstance.textArea.viewOffSet + cursor.x - 2) + character +
+                        shadowLineText.slice(this.editorInstance.textArea.viewOffSet + cursor.x - 2)
                 } else {
                     this.editorInstance.textArea.shadowContent[currentLineOffset] = newLineText;
                 }
@@ -308,6 +309,9 @@ export default class KeyHandler {
         });
     }
 
+    // TODO: There's currently a text insertion issue where text is inserted at the BEGINNING of the line
+    // instead of the end. Pretty sure this function is the issue
+    // It seems to be when text is typed off of the screen...
     endHandler() {
         let viewOffset = this.editorInstance.textArea.viewOffSet;
 
@@ -348,7 +352,7 @@ export default class KeyHandler {
                     // Render the cursor change
                     this.editorInstance.screen.render();
                     // Set the actual offset value to the length of the line
-                    this.editorInstance.textArea.viewOffSet = claculatedShiftAmmount;
+                    this.editorInstance.textArea.viewOffSet = currentShadowLineLength;
                 }
             }
             // No calculation needs to be made to account for the current offset since it's zero
