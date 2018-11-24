@@ -23,7 +23,8 @@ export default class KeyHandler {
     // The main keyyHandler, accepts any standard character that's not handled elsewhere.
     // The cursor is aquired through an argument to prevent event listener overflow from blessed
 
-    // TODO: This isn't working right when a horizontal scrolling offset is being used, fix!
+    // TODO: When in a scroll offset and the text is shorter than the current offset and a character
+    // is inserted on that line, make sure the view snaps back to that line
     mainKeyHandler(character, cursor) {
         // This is where all 'standard' keys go (keys not handled elsewhere)
 
@@ -131,6 +132,10 @@ export default class KeyHandler {
         }
     }
 
+    spaceHandler() {
+
+    }
+
     leftArrowHandler() {
         // This callback returns an err and data object, the data object has the x/y 
         // position of the cursor
@@ -162,20 +167,25 @@ export default class KeyHandler {
         this.editorInstance.program.getCursor((err, cursor) => {
             // Ignore errors until a proper error system is put in place
             if (err) return;
+            // If the cursor is not at the end of the line the cursor is on, move it forward one
             if (cursor.x < this.editorInstance.screen.width - 1) {
-                // If the cursor is not at the end of the line, move it forward one
                 this.editorInstance.program.cursorForward();
                 this.editorInstance.screen.render();
-            } else {
+            }
+            // Horiztonally scroll the text right by 1 if the current line is greater than the
+            // width of the editing window
+            else {
                 // TODO: prevent the cursor from moving past the current line's text length
-                // Horiztonally scroll the text right by 1 if the current line is greater than the
-                // width of the editing window
+
+                // Increase the horizontal view offset of the textArea by one
                 this.editorInstance.textArea.viewOffSet++;
+                // Visually shift all visible text to the right by one
                 this.editorInstance.textArea.rightshiftText();
+                // Render the text shift
                 this.editorInstance.screen.render();
                 // Keep the cursor right against the right bound of the textArea
                 // (this can sometimes get moved due to the redraw of the text)
-                let screenWidthWithUIOffsets = this.editorInstance.screen.width - 3;
+                let screenWidthWithUIOffsets = this.editorInstance.screen.width - 2;
                 this.editorInstance.program.cursorPos(cursor.y - 1, screenWidthWithUIOffsets);
             }
         });

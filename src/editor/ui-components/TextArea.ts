@@ -180,6 +180,10 @@ export default class TextArea {
             this.keyHandler.downArrowHandler();
         });
 
+        this.textArea.key('space', () => {
+            this.keyHandler.spaceHandler();
+        });
+
         this.textArea.on('keypress', (ch, key) => {
             // Return on undefined, these are keys we can handle elsewhere 
             // (undefined means it isn't a display character)
@@ -208,7 +212,8 @@ export default class TextArea {
 
     // This will move the view of the editor 1 character to the left, using
     // the 'shadow' version of the document
-    leftShiftText() {
+    leftShiftText(ammount?: number) {
+        if(!ammount) ammount = 0;
         // Get all currently visible lines as an array
         let lines = this.getVisibleLines();
 
@@ -218,20 +223,21 @@ export default class TextArea {
             // The 'true' text is the same index in the shadowContent array
             let trueText = this.shadowContent[currentLineIndex];
             // Set the current line to the 'true' text by 1 to the left
-            this.textArea.setLine(currentLineIndex, trueText.substring(this.viewOffSet));
+            this.textArea.setLine(currentLineIndex, trueText.substring(this.viewOffSet - ammount));
         });
     }
 
     // This will move the view of the editor 1 character to the right, using
     // the 'shadow' version of the document
-    rightshiftText() {
+    rightshiftText(ammount?: number) {
+        if(!ammount) ammount = 0;
         // Get all currently visible lines as an array
         let lines = this.getVisibleLines();
 
         lines.forEach((line, index) => {
             // Set the currently iterated line to the line minus one character of the string
             // The right shifting of text doesn't need to know what the true text is (for now)
-            this.textArea.setLine(index + this.verticalScrollOffset, line.substring(1));
+            this.textArea.setLine(index + this.verticalScrollOffset, line.substring(1 + ammount));
         });
     }
 
