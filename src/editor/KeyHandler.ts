@@ -142,21 +142,27 @@ export default class KeyHandler {
         this.editorInstance.program.getCursor((err, cursor) => {
             // Ignore errors until a proper error system is put in place
             if (err) return;
+            // If the cursor is not at the end of the line the cursor is on, move it backwards one
             if (cursor.x > 2) {
-                // If the cursor is not at the start of the line, move it backwards one
                 this.editorInstance.program.cursorBackward();
                 this.editorInstance.screen.render();
-            } else if (cursor.x == 2 && this.editorInstance.textArea.viewOffSet == 0) {
+            }
+            else if (cursor.x == 2 && this.editorInstance.textArea.viewOffSet == 0) {
                 // Do nothing (for now)
-            } else if (cursor.x == 2 && this.editorInstance.textArea.viewOffSet !== 0) {
-                // Check if the viewOffset for the textArea isn't 0
-                // Scroll the textArea to the left by 1
+            }
+            // If the viewOffset for the textArea isn't 0, scroll the textArea to the left by 1
+            else if (cursor.x == 2 && this.editorInstance.textArea.viewOffSet !== 0) {
+                // TODO: prevent the cursor from moving past the current line's text length
+
+                // Decrease the horizontal view offset of the textArea by one
                 this.editorInstance.textArea.viewOffSet--;
+                // Visually shift all visible text to the left by one
                 this.editorInstance.textArea.leftShiftText();
+                // Render the text shift
                 this.editorInstance.screen.render();
                 // Keep the cursor right against the left bound of the textArea
                 // (this can sometimes get moved due to the redraw of the text)
-                this.editorInstance.program.cursorPos(cursor.y - 1, 2);
+                this.editorInstance.program.cursorPos(cursor.y - 1, 1);
             }
         });
     }
