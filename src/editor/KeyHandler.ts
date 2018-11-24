@@ -25,6 +25,8 @@ export default class KeyHandler {
 
     // TODO: When in a scroll offset and the text is shorter than the current offset and a character
     // is inserted on that line, make sure the view snaps back to that line
+
+    // TODO: TEST THIS A LOT
     mainKeyHandler(character, cursor) {
         // This is where all 'standard' keys go (keys not handled elsewhere)
 
@@ -285,6 +287,7 @@ export default class KeyHandler {
         // of the cursor
         this.editorInstance.program.getCursor((err, cursor) => {
             // If there is a view offset for the textArea
+            // TODO: Have this only snap back to the START of the current line
             if (viewOffset > 0) {
                 // Shift the text back to zero
                 this.editorInstance.textArea.leftShiftText(viewOffset);
@@ -327,14 +330,30 @@ export default class KeyHandler {
             // If the text is in a horizontally scrolling state
             if (viewOffset > 0) {
                 // This will need a bit of work
-                // If the text's length is less than the screen, the cursor just needs to moves
+                // If the text's length is less than the screen, the cursor just needs to move
                 if (currentLineText.length < this.editorInstance.textArea.textArea.width) {
                     this.editorInstance.program.cursorPos(cursor.y - 1, currentLineText.length + 1);
+                } else {
+                    let currentShadowLineLength = shadowLineLength - viewOffset;
+                    let claculatedShiftAmmount = currentShadowLineLength - textAreaLength;
+
+                    // Right shift the text by the length of the current line minus the view window
+                    this.editorInstance.textArea.rightshiftText(claculatedShiftAmmount);
+                    // Render the text shift
+                    this.editorInstance.screen.render();
+                    // Keep the cursor right against the right bound of the textArea
+                    // (this can sometimes get moved due to the redraw of the text)
+                    let screenWidthWithUIOffsets = this.editorInstance.screen.width - 2;
+                    this.editorInstance.program.cursorPos(cursor.y - 1, screenWidthWithUIOffsets);
+                    // Render the cursor change
+                    this.editorInstance.screen.render();
+                    // Set the actual offset value to the length of the line
+                    this.editorInstance.textArea.viewOffSet = claculatedShiftAmmount;
                 }
             }
             // No calculation needs to be made to account for the current offset since it's zero
             else {
-                // If the text's length is less than the screen, the cursor just needs to moves
+                // If the text's length is less than the screen, the cursor just needs to move
                 if (currentLineText.length < this.editorInstance.textArea.textArea.width) {
                     this.editorInstance.program.cursorPos(cursor.y - 1, currentLineText.length + 1);
                 }
@@ -344,7 +363,7 @@ export default class KeyHandler {
                     // textArea UI component
                     let claculatedShiftAmmount = shadowLineLength - textAreaLength;
                     // Right shift the text by the length of the current line minus the view window
-                    this.editorInstance.textArea.rightshiftText();
+                    this.editorInstance.textArea.rightshiftText(claculatedShiftAmmount);
                     // Render the text shift
                     this.editorInstance.screen.render();
                     // Keep the cursor right against the right bound of the textArea
