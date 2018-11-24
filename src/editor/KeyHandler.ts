@@ -324,14 +324,22 @@ export default class KeyHandler {
             // Not really sure why this is the calculation needed, but it works
             let textAreaLength = this.editorInstance.textArea.textArea.width - 3;
 
+            // If the text is in a horizontally scrolling state
             if (viewOffset > 0) {
                 // This will need a bit of work
+                // If the text's length is less than the screen, the cursor just needs to moves
+                if (currentLineText.length < this.editorInstance.textArea.textArea.width) {
+                    this.editorInstance.program.cursorPos(cursor.y - 1, currentLineText.length + 1);
+                }
             }
             // No calculation needs to be made to account for the current offset since it's zero
             else {
+                // If the text's length is less than the screen, the cursor just needs to moves
                 if (currentLineText.length < this.editorInstance.textArea.textArea.width) {
                     this.editorInstance.program.cursorPos(cursor.y - 1, currentLineText.length + 1);
-                } else {
+                }
+                // A bit of calculation needs to be done otherwise
+                else {
                     // Shorthand for the length of the true text minus the length of the 
                     // textArea UI component
                     let claculatedShiftAmmount = shadowLineLength - textAreaLength;
