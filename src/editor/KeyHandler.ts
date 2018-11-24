@@ -280,9 +280,9 @@ export default class KeyHandler {
     }
 
     homeHandler() {
+        let viewOffset = this.editorInstance.textArea.viewOffSet;
         // This callback returns an err and data object, the data object has the x/y position 
         // of the cursor
-        let viewOffset = this.editorInstance.textArea.viewOffSet;
         this.editorInstance.program.getCursor((err, cursor) => {
             // If there is a view offset for the textArea
             if (viewOffset > 0) {
@@ -306,6 +306,30 @@ export default class KeyHandler {
     }
 
     endHandler() {
+        let viewOffset = this.editorInstance.textArea.viewOffSet;
 
+        // This callback returns an err and data object, the data object has the x/y position 
+        // of the cursor
+        this.editorInstance.program.getCursor((err, cursor) => {
+            // Variable to get the current offset number for the line the cursor is on,
+            // including the scrolling position of the textArea
+            let currentLineOffset = this.editorInstance.textArea.calculateScrollingOffset(cursor);
+
+            // Get the line of text that the cursor is sitting on minus the borders of the screen
+            let currentLineText = this.editorInstance.textArea.textArea.getLine(currentLineOffset);
+
+            let shadowLineText = this.editorInstance.textArea.shadowContent[currentLineOffset];
+
+            if (viewOffset > 0) {
+                // This will need a bit of work
+            } else {
+                if (currentLineText.length < this.editorInstance.textArea.textArea.width) {
+                    this.editorInstance.program.cursorPos(cursor.y - 1, currentLineText.length + 1)
+                } else {
+                    // This requires more work
+                }
+            }
+        });
     }
+
 }
