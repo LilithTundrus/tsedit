@@ -197,7 +197,7 @@ export default class KeyHandler {
         });
     }
 
-        // TODO: have this shift the text left/right depending on the previous line's length compared to the current line
+    // TODO: have this shift the text left/right depending on the previous line's length compared to the current line
     upArrowHandler() {
         // This callback returns an err and data object, the data object has the x/y 
         // position of the cursor
@@ -205,27 +205,30 @@ export default class KeyHandler {
             // Ignore errors until a proper error system is put in place
             if (err) return;
 
-            // This keeps the cursor in top bound of the editing window plus the menubar height
+            // If the cursor is in top bound of the editing window plus the menubar height
             if (cursor.y > 3) {
                 // If the cursor isn't at the top of the textArea, move it up by one
                 this.editorInstance.program.cursorUp();
+                // Render the cursor change
                 this.editorInstance.screen.render();
             }
-            // Scroll the text up by one line
+            // Scroll the text up by one line if the textarea isn't at 0% scroll
             else if (cursor.y == 3 && this.editorInstance.textArea.textArea.getScrollPerc() > 0) {
                 // Scroll the textArea's visible contents up by one
                 this.editorInstance.textArea.textArea.scroll(-1);
 
                 // Make sure that the previous line is on the right horizontal scroll index
                 this.editorInstance.textArea.reformTextUpArrow();
+                // Render the text reforms
                 this.editorInstance.screen.render();
 
                 // Keep the cursor in its previous position
                 // For some reason setting the y on this to 2 scrolls more 'smoothly' than 3 
                 // (less cursor jank)
                 this.editorInstance.program.cursorPos(2, cursor.x - 1);
+                // Render the cursor change
                 this.editorInstance.screen.render();
-                // Reduce the verticalScrollOffset by one to match the blessed scroll function
+                // Reduce the verticalScrollOffset by one to match the blessed scroll index
                 this.editorInstance.textArea.verticalScrollOffset--;
             }
         });
@@ -259,6 +262,7 @@ export default class KeyHandler {
 
                     // Make sure that the next line is on the right horizontal scroll index
                     this.editorInstance.textArea.reformTextDownArrow();
+                    // Render the text reform
                     this.editorInstance.screen.render();
 
                     // Keep the cursor in its previous position
@@ -266,6 +270,7 @@ export default class KeyHandler {
                     // (less cursor jank)
                     let relativeBottomHeight = this.editorInstance.screen.height - 2;
                     this.editorInstance.program.cursorPos(relativeBottomHeight, cursor.x - 1);
+                    // Render the cursor change
                     this.editorInstance.screen.render();
                     // Increase the verticalScrollOffset by one to match the blessed scroll index
                     this.editorInstance.textArea.verticalScrollOffset++;
