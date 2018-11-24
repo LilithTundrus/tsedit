@@ -184,6 +184,14 @@ export default class TextArea {
             this.keyHandler.spaceHandler();
         });
 
+        this.textArea.key('home', () => {
+            this.keyHandler.homeHandler();
+        });
+
+        this.textArea.key('end', () => {
+            this.keyHandler.endHandler();
+        });
+
         this.textArea.on('keypress', (ch, key) => {
             // Return on undefined, these are keys we can handle elsewhere 
             // (undefined means it isn't a display character)
@@ -213,7 +221,7 @@ export default class TextArea {
     // This will move the view of the editor 1 character to the left, using
     // the 'shadow' version of the document
     leftShiftText(ammount?: number) {
-        if(!ammount) ammount = 0;
+        if (!ammount) ammount = 0;
         // Get all currently visible lines as an array
         let lines = this.getVisibleLines();
 
@@ -230,7 +238,7 @@ export default class TextArea {
     // This will move the view of the editor 1 character to the right, using
     // the 'shadow' version of the document
     rightshiftText(ammount?: number) {
-        if(!ammount) ammount = 0;
+        if (!ammount) ammount = 0;
         // Get all currently visible lines as an array
         let lines = this.getVisibleLines();
 

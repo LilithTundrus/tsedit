@@ -279,4 +279,33 @@ export default class KeyHandler {
         });
     }
 
+    homeHandler() {
+        // This callback returns an err and data object, the data object has the x/y position 
+        // of the cursor
+        let viewOffset = this.editorInstance.textArea.viewOffSet;
+        this.editorInstance.program.getCursor((err, cursor) => {
+            // If there is a view offset for the textArea
+            if (viewOffset > 0) {
+                // Shift the text back to zero
+                this.editorInstance.textArea.leftShiftText(viewOffset);
+                // Render the text shift
+                this.editorInstance.screen.render();
+                // Set the actual offset value to zero
+                this.editorInstance.textArea.viewOffSet = 0;
+                // Move the cursor to the start of the current line
+                this.editorInstance.program.cursorPos(cursor.y - 1, 1);
+                // Render the cursor change
+                this.editorInstance.screen.render();
+            } else {
+                // Simply move the cursor to the beginning of the line
+                this.editorInstance.program.cursorPos(cursor.y - 1, 1);
+                // Render the cursor change
+                this.editorInstance.screen.render();
+            }
+        });
+    }
+
+    endHandler() {
+
+    }
 }
