@@ -197,6 +197,7 @@ export default class KeyHandler {
         });
     }
 
+        // TODO: have this shift the text left/right depending on the previous line's length compared to the current line
     upArrowHandler() {
         // This callback returns an err and data object, the data object has the x/y 
         // position of the cursor
@@ -230,6 +231,7 @@ export default class KeyHandler {
         });
     }
 
+    // TODO: have this shift the text left/right depending on the next line's length compared to the current line
     downArrowHandler() {
         // This callback returns an err and data object, the data object has the x/y position 
         // of the cursor
@@ -238,7 +240,7 @@ export default class KeyHandler {
             if (err) return;
 
             // This visually keeps the cursor in bottom bound of the editing window,
-            // plus the statusbar height
+            // accounting for the extra the statusbar height
             if (cursor.y < this.editorInstance.screen.height - 1) {
                 // If the cursor isn't at the bottom of the textArea, move it down by one
                 this.editorInstance.program.cursorDown();
@@ -246,23 +248,28 @@ export default class KeyHandler {
             }
             // Scroll the text down by one if the cursor is at the bottom of the textArea
             else if (cursor.y == this.editorInstance.screen.height - 1) {
-                this.editorInstance.textArea.textArea.scroll(1);
-                this.editorInstance.screen.render();
+                // This AND check prevents a crash that occurs when on the last line of the 
+                // text being edited
+                if (this.editorInstance.textArea.textArea.getScrollPerc() !== 100) {
 
-                // TODO: Fix a crash that occurs when on the last line of the text being edited
+                    // Scroll the textArea down by one
+                    this.editorInstance.textArea.textArea.scroll(1);
+                    // Ensure the scroll rendered before the text reform function is called
+                    this.editorInstance.screen.render();
 
-                // Make sure that the next line is on the right horizontal scroll index
-                this.editorInstance.textArea.reformTextDownArrow();
-                this.editorInstance.screen.render();
+                    // Make sure that the next line is on the right horizontal scroll index
+                    this.editorInstance.textArea.reformTextDownArrow();
+                    this.editorInstance.screen.render();
 
-                // Keep the cursor in its previous position
-                // For some reason setting the y on this to 2 scrolls more 'smoothly' than 3 
-                // (less cursor jank)
-                let relativeBottomHeight = this.editorInstance.screen.height - 2;
-                this.editorInstance.program.cursorPos(relativeBottomHeight, cursor.x - 1);
-                this.editorInstance.screen.render();
-                // Increase the verticalScrollOffset by one to match the blessed scroll function
-                this.editorInstance.textArea.verticalScrollOffset++;
+                    // Keep the cursor in its previous position
+                    // For some reason setting the y on this to 2 scrolls more 'smoothly' than 3
+                    // (less cursor jank)
+                    let relativeBottomHeight = this.editorInstance.screen.height - 2;
+                    this.editorInstance.program.cursorPos(relativeBottomHeight, cursor.x - 1);
+                    this.editorInstance.screen.render();
+                    // Increase the verticalScrollOffset by one to match the blessed scroll index
+                    this.editorInstance.textArea.verticalScrollOffset++;
+                }
             }
         });
     }
