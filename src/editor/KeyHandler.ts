@@ -42,7 +42,13 @@ export default class KeyHandler {
             // If there's no text to begin with, this check should avoid text going onto a new line
             if (cursor.x == 2 && currentLineText.length < 1) {
                 // Update the real data with the given character
-                this.editorInstance.textArea.shadowContent[currentLineOffset] = character;
+                if (this.editorInstance.textArea.viewOffSet > 0) {
+                    this.editorInstance.textArea.shadowContent[currentLineOffset] =
+                        shadowLineText.slice(0, this.editorInstance.textArea.viewOffSet) + character +
+                        shadowLineText.slice(this.editorInstance.textArea.viewOffSet)
+                } else {
+                    this.editorInstance.textArea.shadowContent[currentLineOffset] = character;
+                }
                 // Add the character to the beginning of the line
                 this.editorInstance.textArea.textArea.setLine(currentLineOffset, character);
                 // Render the text change
@@ -74,7 +80,7 @@ export default class KeyHandler {
                 // last position it was in before the text change
                 this.editorInstance.program.cursorPos(cursor.y - 1, cursor.x);
             }
-            // If the cursor is at the end
+            // If the cursor is at the end (this only works when the view offset is zero)
             else if (cursor.x >= currentLineText.length + 1) {
                 // Add the character to the end of the line, the cursor auto-renders
                 // and moves forward on its own in this case
@@ -82,7 +88,12 @@ export default class KeyHandler {
                 this.editorInstance.textArea.textArea.setLine(currentLineOffset, newLineText);
 
                 // Update the real data with the given character
-                this.editorInstance.textArea.shadowContent[currentLineOffset] = newLineText;
+                if (this.editorInstance.textArea.viewOffSet > 0) {
+                    this.editorInstance.textArea.shadowContent[currentLineOffset] =
+                        shadowLineText + character;
+                } else {
+                    this.editorInstance.textArea.shadowContent[currentLineOffset] = newLineText;
+                }
 
                 // No cursor shift is needed since it is automatic on this case
             }
@@ -98,7 +109,14 @@ export default class KeyHandler {
                 this.editorInstance.textArea.textArea.setLine(currentLineOffset, newLineText);
 
                 // Update the real data with the given character
-                this.editorInstance.textArea.shadowContent[currentLineOffset] = newLineText;
+                if (this.editorInstance.textArea.viewOffSet > 0) {
+                    // Insert the character into the string with the viewoffset
+                    this.editorInstance.textArea.shadowContent[currentLineOffset] =
+                        shadowLineText.slice(0, this.editorInstance.textArea.viewOffSet) + character +
+                        shadowLineText.slice(this.editorInstance.textArea.viewOffSet)
+                } else {
+                    this.editorInstance.textArea.shadowContent[currentLineOffset] = newLineText;
+                }
 
                 // Render the text change
                 this.editorInstance.screen.render();
