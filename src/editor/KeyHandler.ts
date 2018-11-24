@@ -318,15 +318,35 @@ export default class KeyHandler {
             // Get the line of text that the cursor is sitting on minus the borders of the screen
             let currentLineText = this.editorInstance.textArea.textArea.getLine(currentLineOffset);
 
+            // Shadow line is the 'true' line, not just the edit view
             let shadowLineText = this.editorInstance.textArea.shadowContent[currentLineOffset];
+            let shadowLineLength = shadowLineText.length;
+            // Not really sure why this is the calculation needed, but it works
+            let textAreaLength = this.editorInstance.textArea.textArea.width - 3;
 
             if (viewOffset > 0) {
                 // This will need a bit of work
-            } else {
+            }
+            // No calculation needs to be made to account for the current offset since it's zero
+            else {
                 if (currentLineText.length < this.editorInstance.textArea.textArea.width) {
-                    this.editorInstance.program.cursorPos(cursor.y - 1, currentLineText.length + 1)
+                    this.editorInstance.program.cursorPos(cursor.y - 1, currentLineText.length + 1);
                 } else {
-                    // This requires more work
+                    // Shorthand for the length of the true text minus the length of the 
+                    // textArea UI component
+                    let claculatedShiftAmmount = shadowLineLength - textAreaLength;
+                    // Right shift the text by the length of the current line minus the view window
+                    this.editorInstance.textArea.rightshiftText();
+                    // Render the text shift
+                    this.editorInstance.screen.render();
+                    // Keep the cursor right against the right bound of the textArea
+                    // (this can sometimes get moved due to the redraw of the text)
+                    let screenWidthWithUIOffsets = this.editorInstance.screen.width - 2;
+                    this.editorInstance.program.cursorPos(cursor.y - 1, screenWidthWithUIOffsets);
+                    // Render the cursor change
+                    this.editorInstance.screen.render();
+                    // Set the actual offset value to the length of the line
+                    this.editorInstance.textArea.viewOffSet = claculatedShiftAmmount;
                 }
             }
         });
