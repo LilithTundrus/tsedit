@@ -71,9 +71,10 @@ export default class KeyHandler {
                 if (this.editorInstance.textArea.viewOffSet > 0) {
                     // Make sure the insert occurs correctly, even when the view is shifted
                     this.editorInstance.textArea.shadowContent[currentLineOffset] =
-                        /* shadowLineText.slice(0, this.editorInstance.textArea.viewOffSet + 2) + */ character +
-                        shadowLineText.slice(this.editorInstance.textArea.viewOffSet + 2)
-                    // this.editorInstance.textArea.textArea.setLine(currentLineOffset, newLineText);
+                        shadowLineText.slice(0, this.editorInstance.textArea.viewOffSet + cursor.x - 1) + character
+                        + shadowLineText.slice(this.editorInstance.textArea.viewOffSet + cursor.x - 1)
+                    this.editorInstance.textArea.textArea.setLine(currentLineOffset, newLineText);
+                    this.editorInstance.textArea.leftShiftText()
                 } else {
                     this.editorInstance.textArea.shadowContent[currentLineOffset] = newLineText;
                     // Update the viewable line with the given character
