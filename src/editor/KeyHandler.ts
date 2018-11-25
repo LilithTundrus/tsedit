@@ -65,6 +65,8 @@ export default class KeyHandler {
             // TODO: Have this make sure that the current line's text isn't COMPLETELY off the screen,
             // if so, the view needs to snap back to that column
             // TODO: this still has an issue with positioning/text aquire
+            // EDIT: It was that the text was being shifted left and the view offset number wasn't
+            // being updated
             else if (cursor.x == 2 && currentLineText.length > 1) {
 
                 // Add the character to the beginning of the line
@@ -77,7 +79,8 @@ export default class KeyHandler {
                         shadowLineText.slice(0, this.editorInstance.textArea.viewOffSet + cursor.x - 1) + character
                         + shadowLineText.slice(this.editorInstance.textArea.viewOffSet + cursor.x - 1)
                     this.editorInstance.textArea.textArea.setLine(currentLineOffset, newLineText);
-                    // this.editorInstance.textArea.leftShiftText();
+                    this.editorInstance.textArea.leftShiftText();
+                    this.editorInstance.textArea.viewOffSet--;
                     // Render the text change
                     this.editorInstance.screen.render();
                     // Offset the auto-cursor-restore to move the cursor back to the
