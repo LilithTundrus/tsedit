@@ -60,6 +60,7 @@ export default class KeyHandler {
             this.editorInstance.screen.render();
         } else {
             // Shift the horizontal scroll 1 to the right and add the character
+            this.mainKeyHandelerAdvancedEndOfLineHandler(cursor, character);
         }
     }
 
@@ -193,6 +194,55 @@ export default class KeyHandler {
 
         } else {
             this.editorInstance.textArea.shadowContent[currentLineOffset] = newLineText;
+        }
+
+        // Render the text change
+        this.editorInstance.screen.render();
+        // Move the cursor back to where it was before the text was added
+        this.editorInstance.program.cursorPos(cursor.y - 1, cursor.x);
+    }
+
+    // This will insert text into the 'real' string and move the text forward one
+    // so the text can keep naturally scroll and be entered properlyE
+    private mainKeyHandelerAdvancedEndOfLineHandler(cursor, character: string) {
+        // Variable to get the current offset number for the line the cursor is on,
+        // including the scrolling position of the textArea
+        let currentLineOffset = this.editorInstance.textArea.calculateScrollingOffset(cursor);
+
+        // Get the line of text that the cursor is sitting on minus the borders of the screen
+        let currentLineText = this.editorInstance.textArea.textArea.getLine(currentLineOffset);
+
+        // The 'true' text for the current line
+        let shadowLineText = this.editorInstance.textArea.shadowContent[currentLineOffset];
+
+        // String portion BEFORE the insert (visual, not actual)
+        let startingString = currentLineText.substring(0, cursor.x - 2);
+        // String portion AFTER the insert (this is the entire string after the cursor)
+        let endingString = currentLineText.substring(cursor.x - 2);
+
+        // Add the character in between the 2 strings
+        let newLineText = startingString + character;
+
+        this.editorInstance.textArea.textArea.setLine(currentLineOffset, newLineText);
+        // Render the text change
+        this.editorInstance.screen.render();
+
+        // Update the real data with the given character
+        if (this.editorInstance.textArea.viewOffSet > 0) {
+            let textBeforeCursor = shadowLineText.slice(0, this.editorInstance.textArea.viewOffSet + cursor.x - 1);
+            let textAfterCursor = shadowLineText.slice(this.editorInstance.textArea.viewOffSet + cursor.x - 1)
+
+            // Insert the character into the 'true' string at the correct position
+            // The ending string can be used here since it has all information after the
+            // inserted character
+            this.editorInstance.textArea.shadowContent[currentLineOffset] =
+                textBeforeCursor + character + textAfterCursor;
+            this.editorInstance.textArea.rightshiftText();
+            this.editorInstance.textArea.viewOffSet++;
+        } else {
+            this.editorInstance.textArea.shadowContent[currentLineOffset] = newLineText;
+            this.editorInstance.textArea.rightshiftText();
+            this.editorInstance.textArea.viewOffSet++;
         }
 
         // Render the text change
