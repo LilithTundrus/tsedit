@@ -33,7 +33,6 @@ export default class KeyHandler {
     mainKeyHandler(character, cursor) {
         // This is where all 'standard' keys go (keys not handled elsewhere)
 
-        // ON EACH OF THESE, THE SHADOW LINE MUST BE UPDATED AS WELL
         if (cursor.x < this.editorInstance.screen.width - 1) {
 
             // Variable to get the current offset number for the line the cursor is on,
@@ -72,14 +71,16 @@ export default class KeyHandler {
                 if (this.editorInstance.textArea.viewOffSet > 0) {
                     // Make sure the insert occurs correctly, even when the view is shifted
                     this.editorInstance.textArea.shadowContent[currentLineOffset] =
-                        shadowLineText.slice(0, this.editorInstance.textArea.viewOffSet) + character +
-                        shadowLineText.slice(this.editorInstance.textArea.viewOffSet)
+                        /* shadowLineText.slice(0, this.editorInstance.textArea.viewOffSet + 2) + */ character +
+                        shadowLineText.slice(this.editorInstance.textArea.viewOffSet + 2)
+                    // this.editorInstance.textArea.textArea.setLine(currentLineOffset, newLineText);
                 } else {
                     this.editorInstance.textArea.shadowContent[currentLineOffset] = newLineText;
+                    // Update the viewable line with the given character
+                    this.editorInstance.textArea.textArea.setLine(currentLineOffset, newLineText);
                 }
 
-                // Update the viewable line with the given character
-                this.editorInstance.textArea.textArea.setLine(currentLineOffset, newLineText);
+
                 // Render the text change
                 this.editorInstance.screen.render();
                 // Offset the auto-cursor-restore to move the cursor back to the

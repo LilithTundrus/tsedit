@@ -99,7 +99,7 @@ export default class Editor {
         // been saved
 
         // TODO: The first thing to do should be a navigable textArea, horiztonally and vertically
-        // that allows for text entry and proper flow
+        // that allows for text editing and proper flow
 
         // Set the title of the terminal window (if any) -- this will eventually take cli arguments
         // for reading a file to be edited
