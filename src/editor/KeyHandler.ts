@@ -39,16 +39,12 @@ export default class KeyHandler {
             // Get the line of text that the cursor is sitting on minus the borders of the screen
             let currentLineText = this.editorInstance.textArea.textArea.getLine(currentLineOffset);
 
-            let shadowLineText = this.editorInstance.textArea.shadowContent[currentLineOffset];
-
             // If there's no text to begin with, this check should avoid text going onto a new line
             if (cursor.x == 2 && currentLineText.length < 1) {
                 this.mainKeyHandlerBlankLine(cursor, character);
             }
             // If cursor is at the beginning of the line, this will
             // move the rest of the text forward and insert the character
-            // TODO: Have this make sure that the current line's text isn't COMPLETELY off the screen,
-            // if so, the view needs to snap back to that column and adjust the view offset
             else if (cursor.x == 2 && currentLineText.length > 1) {
                 this.mainkeyHandlerFirstColumnInsert(cursor, character);
             }
@@ -60,7 +56,6 @@ export default class KeyHandler {
             else {
                 this.mainkeyHandlerAnyColumnInsert(cursor, character);
             }
-
             // Always render the screen to be sure the changes made correctly appear
             this.editorInstance.screen.render();
         } else {
@@ -68,6 +63,7 @@ export default class KeyHandler {
         }
     }
 
+    // This is literally only handling blank lines, and for one character
     private mainKeyHandlerBlankLine(cursor, character: string) {
         // Variable to get the current offset number for the line the cursor is on,
         // including the scrolling position of the textArea
