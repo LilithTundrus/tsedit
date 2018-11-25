@@ -62,6 +62,9 @@ export default class KeyHandler {
             }
             // If cursor is at the beginning of the line, this will
             // move the rest of the text forward and insert the character
+            // TODO: Have this make sure that the current line's text isn't COMPLETELY off the screen,
+            // if so, the view needs to snap back to that column
+            // TODO: this still has an issue with positioning/text aquire
             else if (cursor.x == 2 && currentLineText.length > 1) {
 
                 // Add the character to the beginning of the line
@@ -74,19 +77,23 @@ export default class KeyHandler {
                         shadowLineText.slice(0, this.editorInstance.textArea.viewOffSet + cursor.x - 1) + character
                         + shadowLineText.slice(this.editorInstance.textArea.viewOffSet + cursor.x - 1)
                     this.editorInstance.textArea.textArea.setLine(currentLineOffset, newLineText);
-                    this.editorInstance.textArea.leftShiftText()
+                    // this.editorInstance.textArea.leftShiftText();
+                    // Render the text change
+                    this.editorInstance.screen.render();
+                    // Offset the auto-cursor-restore to move the cursor back to the
+                    // last position it was in before the text change
+                    this.editorInstance.program.cursorPos(cursor.y - 1, cursor.x + 1);
                 } else {
                     this.editorInstance.textArea.shadowContent[currentLineOffset] = newLineText;
                     // Update the viewable line with the given character
                     this.editorInstance.textArea.textArea.setLine(currentLineOffset, newLineText);
+                    // Render the text change
+                    this.editorInstance.screen.render();
+                    // Offset the auto-cursor-restore to move the cursor back to the
+                    // last position it was in before the text change
+                    this.editorInstance.program.cursorPos(cursor.y - 1, cursor.x);
                 }
 
-
-                // Render the text change
-                this.editorInstance.screen.render();
-                // Offset the auto-cursor-restore to move the cursor back to the
-                // last position it was in before the text change
-                this.editorInstance.program.cursorPos(cursor.y - 1, cursor.x);
             }
             // If the cursor is at the end (this only works when the view offset is zero)
             else if (cursor.x >= currentLineText.length + 1) {
@@ -146,7 +153,15 @@ export default class KeyHandler {
     }
 
     spaceHandler() {
+        // This will need a lot of work, should be similar to the main keyhandler
+    }
 
+    enterHandler() {
+        // This will need a lot of work, should be similar to the main keyhandler
+    }
+
+    tabHandler() {
+        // This will need a lot of work, should be similar to the main keyhandler
     }
 
     leftArrowHandler() {
