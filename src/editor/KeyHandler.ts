@@ -48,7 +48,7 @@ export default class KeyHandler {
             else if (cursor.x == 2 && currentLineText.length > 1) {
                 this.mainkeyHandlerFirstColumnInsert(cursor, character);
             }
-            // If the cursor is at the end (this only works when the view offset is zero)
+            // If the cursor is at the end
             else if (cursor.x >= currentLineText.length + 1) {
                 this.mainkeyHandlerBasicEndOfLineHandler(cursor, character);
             }
@@ -132,6 +132,7 @@ export default class KeyHandler {
         }
     }
 
+    // This is only handling text insertion at the end of the line (even when viewOffset is not 0)
     private mainkeyHandlerBasicEndOfLineHandler(cursor, character: string) {
         // Variable to get the current offset number for the line the cursor is on,
         // including the scrolling position of the textArea
