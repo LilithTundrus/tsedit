@@ -105,22 +105,26 @@ export default class KeyHandler {
             }
             // If the cursor is somehwere in the middle (it's an insert)
             else {
-                // String portion BEFORE the insert
+                // String portion BEFORE the insert (visual, not actual)
                 let startingString = currentLineText.substring(0, cursor.x - 2);
-                // String portion AFTER the insert
+                // String portion AFTER the insert (this is the entire string after the cursor)
                 let endingString = currentLineText.substring(cursor.x - 2);
 
                 // Add the character in between the 2 strings
                 let newLineText = startingString + character + endingString;
+                // Set the current line to the new line with the new character inserted
                 this.editorInstance.textArea.textArea.setLine(currentLineOffset, newLineText);
 
                 // Update the real data with the given character
                 if (this.editorInstance.textArea.viewOffSet > 0) {
-                    // Insert the character into the string with the viewoffset
                     let textBeforeCursor = shadowLineText.slice(0, this.editorInstance.textArea.viewOffSet + cursor.x - 1);
-                    let textAfterCursor = shadowLineText.slice(this.editorInstance.textArea.viewOffSet + cursor.x - 2 + 1)
+                    let textAfterCursor = shadowLineText.slice(this.editorInstance.textArea.viewOffSet + cursor.x - 1)
+
+                    // Insert the character into the 'true' string at the correct position
+                    // The ending string can be used here since it has all information after the
+                    // inserted character
                     this.editorInstance.textArea.shadowContent[currentLineOffset] =
-                        textBeforeCursor + character;
+                        textBeforeCursor + character + textAfterCursor;
 
                 } else {
                     this.editorInstance.textArea.shadowContent[currentLineOffset] = newLineText;
