@@ -26,10 +26,7 @@ export default class KeyHandler {
     // TODO: When in a scroll offset and the text is shorter than the current offset and a character
     // is inserted on that line, make sure the view snaps back to that line
 
-    // TODO: TEST ALL FUNCTIONS A LOT
-
-    // TODO: There's an issue with text insertion on the vertical scroll where it inserts
-    // characters in between text incorrectly, like so: aaa inserting bbb at the beginning turns into abbbaa
+    // TODO: TEST ALL OF THIS A LOT
     mainKeyHandler(character, cursor) {
         // This is where all 'standard' keys go (keys not handled elsewhere)
 
@@ -46,27 +43,12 @@ export default class KeyHandler {
 
             // If there's no text to begin with, this check should avoid text going onto a new line
             if (cursor.x == 2 && currentLineText.length < 1) {
-                // Update the real data with the given character
-                if (this.editorInstance.textArea.viewOffSet > 0) {
-                    this.editorInstance.textArea.shadowContent[currentLineOffset] =
-                        shadowLineText.slice(0, this.editorInstance.textArea.viewOffSet) + character +
-                        shadowLineText.slice(this.editorInstance.textArea.viewOffSet)
-                } else {
-                    this.editorInstance.textArea.shadowContent[currentLineOffset] = character;
-                }
-                // Add the character to the beginning of the line
-                this.editorInstance.textArea.textArea.setLine(currentLineOffset, character);
-                // Render the text change
-                this.editorInstance.screen.render();
-                // No cursor shift is needed since it is automatic on this case
+                this.mainKeyHandlerBlankLine(character);
             }
             // If cursor is at the beginning of the line, this will
             // move the rest of the text forward and insert the character
             // TODO: Have this make sure that the current line's text isn't COMPLETELY off the screen,
             // if so, the view needs to snap back to that column
-            // TODO: this still has an issue with positioning/text aquire
-            // EDIT: It was that the text was being shifted left and the view offset number wasn't
-            // being updated
             else if (cursor.x == 2 && currentLineText.length > 1) {
 
                 // Add the character to the beginning of the line
@@ -74,19 +56,26 @@ export default class KeyHandler {
 
                 // Update the real data with the given character
                 if (this.editorInstance.textArea.viewOffSet > 0) {
-                    // Make sure the insert occurs correctly, even when the view is shifted
-                    this.editorInstance.textArea.shadowContent[currentLineOffset] =
-                        shadowLineText.slice(0, this.editorInstance.textArea.viewOffSet + cursor.x - 1) + character
-                        + shadowLineText.slice(this.editorInstance.textArea.viewOffSet + cursor.x - 1)
-                    this.editorInstance.textArea.textArea.setLine(currentLineOffset, newLineText);
-                    this.editorInstance.textArea.leftShiftText();
-                    this.editorInstance.textArea.viewOffSet--;
-                    // Render the text change
-                    this.editorInstance.screen.render();
-                    // Offset the auto-cursor-restore to move the cursor back to the
-                    // last position it was in before the text change
-                    this.editorInstance.program.cursorPos(cursor.y - 1, cursor.x + 1);
-                } else {
+                    if (shadowLineText.length > this.editorInstance.textArea.viewOffSet) {
+                        // Make sure the insert occurs correctly, even when the view is shifted
+                        this.editorInstance.textArea.shadowContent[currentLineOffset] =
+                            shadowLineText.slice(0, this.editorInstance.textArea.viewOffSet + cursor.x - 1) + character
+                            + shadowLineText.slice(this.editorInstance.textArea.viewOffSet + cursor.x - 1)
+                        this.editorInstance.textArea.textArea.setLine(currentLineOffset, newLineText);
+                        this.editorInstance.textArea.leftShiftText();
+                        this.editorInstance.textArea.viewOffSet--;
+                        // Render the text change
+                        this.editorInstance.screen.render();
+                        // Offset the auto-cursor-restore to move the cursor back to the
+                        // last position it was in before the text change
+                        this.editorInstance.program.cursorPos(cursor.y - 1, cursor.x + 1);
+                    } else {
+                        process.exit();
+
+                    }
+
+                }
+                else {
                     this.editorInstance.textArea.shadowContent[currentLineOffset] = newLineText;
                     // Update the viewable line with the given character
                     this.editorInstance.textArea.textArea.setLine(currentLineOffset, newLineText);
@@ -153,6 +142,31 @@ export default class KeyHandler {
         } else {
             // Shift the horizontal scroll 1 to the right and add the character
         }
+    }
+
+    private mainKeyHandlerBlankLine(cursor, character) {
+
+        // Variable to get the current offset number for the line the cursor is on,
+        // including the scrolling position of the textArea
+        let currentLineOffset = this.editorInstance.textArea.calculateScrollingOffset(cursor);
+
+        // Get the line of text that the cursor is sitting on minus the borders of the screen
+        let currentLineText = this.editorInstance.textArea.textArea.getLine(currentLineOffset);
+
+        let shadowLineText = this.editorInstance.textArea.shadowContent[currentLineOffset];
+        // Update the real data with the given character
+        if (this.editorInstance.textArea.viewOffSet > 0) {
+            this.editorInstance.textArea.shadowContent[currentLineOffset] =
+                shadowLineText.slice(0, this.editorInstance.textArea.viewOffSet) + character +
+                shadowLineText.slice(this.editorInstance.textArea.viewOffSet)
+        } else {
+            this.editorInstance.textArea.shadowContent[currentLineOffset] = character;
+        }
+        // Add the character to the beginning of the line
+        this.editorInstance.textArea.textArea.setLine(currentLineOffset, character);
+        // Render the text change
+        this.editorInstance.screen.render();
+        // No cursor shift is needed since it is automatic on this case
     }
 
     spaceHandler() {
