@@ -43,98 +43,22 @@ export default class KeyHandler {
 
             // If there's no text to begin with, this check should avoid text going onto a new line
             if (cursor.x == 2 && currentLineText.length < 1) {
-                this.mainKeyHandlerBlankLine(character);
+                this.mainKeyHandlerBlankLine(cursor, character);
             }
             // If cursor is at the beginning of the line, this will
             // move the rest of the text forward and insert the character
             // TODO: Have this make sure that the current line's text isn't COMPLETELY off the screen,
-            // if so, the view needs to snap back to that column
+            // if so, the view needs to snap back to that column and adjust the view offset
             else if (cursor.x == 2 && currentLineText.length > 1) {
-
-                // Add the character to the beginning of the line
-                let newLineText = character + currentLineText;
-
-                // Update the real data with the given character
-                if (this.editorInstance.textArea.viewOffSet > 0) {
-                    if (shadowLineText.length > this.editorInstance.textArea.viewOffSet) {
-                        // Make sure the insert occurs correctly, even when the view is shifted
-                        this.editorInstance.textArea.shadowContent[currentLineOffset] =
-                            shadowLineText.slice(0, this.editorInstance.textArea.viewOffSet + cursor.x - 1) + character
-                            + shadowLineText.slice(this.editorInstance.textArea.viewOffSet + cursor.x - 1)
-                        this.editorInstance.textArea.textArea.setLine(currentLineOffset, newLineText);
-                        this.editorInstance.textArea.leftShiftText();
-                        this.editorInstance.textArea.viewOffSet--;
-                        // Render the text change
-                        this.editorInstance.screen.render();
-                        // Offset the auto-cursor-restore to move the cursor back to the
-                        // last position it was in before the text change
-                        this.editorInstance.program.cursorPos(cursor.y - 1, cursor.x + 1);
-                    } else {
-                        process.exit();
-
-                    }
-
-                }
-                else {
-                    this.editorInstance.textArea.shadowContent[currentLineOffset] = newLineText;
-                    // Update the viewable line with the given character
-                    this.editorInstance.textArea.textArea.setLine(currentLineOffset, newLineText);
-                    // Render the text change
-                    this.editorInstance.screen.render();
-                    // Offset the auto-cursor-restore to move the cursor back to the
-                    // last position it was in before the text change
-                    this.editorInstance.program.cursorPos(cursor.y - 1, cursor.x);
-                }
-
+                this.mainkeyHandlerFirstColumnInsert(cursor, character);
             }
             // If the cursor is at the end (this only works when the view offset is zero)
             else if (cursor.x >= currentLineText.length + 1) {
-                // Add the character to the end of the line, the cursor auto-renders
-                // and moves forward on its own in this case
-                let newLineText = currentLineText + character;
-                this.editorInstance.textArea.textArea.setLine(currentLineOffset, newLineText);
-
-                // Update the real data with the given character
-                if (this.editorInstance.textArea.viewOffSet > 0) {
-                    this.editorInstance.textArea.shadowContent[currentLineOffset] =
-                        shadowLineText + character;
-                } else {
-                    this.editorInstance.textArea.shadowContent[currentLineOffset] = newLineText;
-                }
-
-                // No cursor shift is needed since it is automatic on this case
+                this.mainkeyHandlerBasicEndOfLineHandler(cursor, character);
             }
             // If the cursor is somehwere in the middle (it's an insert)
             else {
-                // String portion BEFORE the insert (visual, not actual)
-                let startingString = currentLineText.substring(0, cursor.x - 2);
-                // String portion AFTER the insert (this is the entire string after the cursor)
-                let endingString = currentLineText.substring(cursor.x - 2);
-
-                // Add the character in between the 2 strings
-                let newLineText = startingString + character + endingString;
-                // Set the current line to the new line with the new character inserted
-                this.editorInstance.textArea.textArea.setLine(currentLineOffset, newLineText);
-
-                // Update the real data with the given character
-                if (this.editorInstance.textArea.viewOffSet > 0) {
-                    let textBeforeCursor = shadowLineText.slice(0, this.editorInstance.textArea.viewOffSet + cursor.x - 1);
-                    let textAfterCursor = shadowLineText.slice(this.editorInstance.textArea.viewOffSet + cursor.x - 1)
-
-                    // Insert the character into the 'true' string at the correct position
-                    // The ending string can be used here since it has all information after the
-                    // inserted character
-                    this.editorInstance.textArea.shadowContent[currentLineOffset] =
-                        textBeforeCursor + character + textAfterCursor;
-
-                } else {
-                    this.editorInstance.textArea.shadowContent[currentLineOffset] = newLineText;
-                }
-
-                // Render the text change
-                this.editorInstance.screen.render();
-                // Move the cursor back to where it was before the text was added
-                this.editorInstance.program.cursorPos(cursor.y - 1, cursor.x);
+                this.mainkeyHandlerAnyColumnInsert(cursor, character);
             }
 
             // Always render the screen to be sure the changes made correctly appear
@@ -144,16 +68,14 @@ export default class KeyHandler {
         }
     }
 
-    private mainKeyHandlerBlankLine(cursor, character) {
-
+    private mainKeyHandlerBlankLine(cursor, character: string) {
         // Variable to get the current offset number for the line the cursor is on,
         // including the scrolling position of the textArea
         let currentLineOffset = this.editorInstance.textArea.calculateScrollingOffset(cursor);
 
-        // Get the line of text that the cursor is sitting on minus the borders of the screen
-        let currentLineText = this.editorInstance.textArea.textArea.getLine(currentLineOffset);
-
+        // The 'true' text for the current line
         let shadowLineText = this.editorInstance.textArea.shadowContent[currentLineOffset];
+
         // Update the real data with the given character
         if (this.editorInstance.textArea.viewOffSet > 0) {
             this.editorInstance.textArea.shadowContent[currentLineOffset] =
@@ -167,6 +89,119 @@ export default class KeyHandler {
         // Render the text change
         this.editorInstance.screen.render();
         // No cursor shift is needed since it is automatic on this case
+    }
+
+    private mainkeyHandlerFirstColumnInsert(cursor, character: string) {
+        // Variable to get the current offset number for the line the cursor is on,
+        // including the scrolling position of the textArea
+        let currentLineOffset = this.editorInstance.textArea.calculateScrollingOffset(cursor);
+
+        // Get the line of text that the cursor is sitting on minus the borders of the screen
+        let currentLineText = this.editorInstance.textArea.textArea.getLine(currentLineOffset);
+
+        // The 'true' text for the current line
+        let shadowLineText = this.editorInstance.textArea.shadowContent[currentLineOffset];
+
+        // Add the character to the beginning of the line
+        let newLineText = character + currentLineText;
+
+        // Update the real data with the given character
+        if (this.editorInstance.textArea.viewOffSet > 0) {
+            if (shadowLineText.length > this.editorInstance.textArea.viewOffSet) {
+                // Make sure the insert occurs correctly, even when the view is shifted
+                this.editorInstance.textArea.shadowContent[currentLineOffset] =
+                    shadowLineText.slice(0, this.editorInstance.textArea.viewOffSet + cursor.x - 1) + character
+                    + shadowLineText.slice(this.editorInstance.textArea.viewOffSet + cursor.x - 1)
+                this.editorInstance.textArea.textArea.setLine(currentLineOffset, newLineText);
+                this.editorInstance.textArea.leftShiftText();
+                this.editorInstance.textArea.viewOffSet--;
+                // Render the text change
+                this.editorInstance.screen.render();
+                // Offset the auto-cursor-restore to move the cursor back to the
+                // last position it was in before the text change
+                this.editorInstance.program.cursorPos(cursor.y - 1, cursor.x + 1);
+            } else {
+                process.exit();
+            }
+        }
+        else {
+            this.editorInstance.textArea.shadowContent[currentLineOffset] = newLineText;
+            // Update the viewable line with the given character
+            this.editorInstance.textArea.textArea.setLine(currentLineOffset, newLineText);
+            // Render the text change
+            this.editorInstance.screen.render();
+            // Offset the auto-cursor-restore to move the cursor back to the
+            // last position it was in before the text change
+            this.editorInstance.program.cursorPos(cursor.y - 1, cursor.x);
+        }
+    }
+
+    private mainkeyHandlerBasicEndOfLineHandler(cursor, character: string) {
+        // Variable to get the current offset number for the line the cursor is on,
+        // including the scrolling position of the textArea
+        let currentLineOffset = this.editorInstance.textArea.calculateScrollingOffset(cursor);
+
+        // Get the line of text that the cursor is sitting on minus the borders of the screen
+        let currentLineText = this.editorInstance.textArea.textArea.getLine(currentLineOffset);
+
+        // The 'true' text for the current line
+        let shadowLineText = this.editorInstance.textArea.shadowContent[currentLineOffset];
+
+        // Add the character to the end of the line, the cursor auto-renders
+        // and moves forward on its own in this case
+        let newLineText = currentLineText + character;
+        this.editorInstance.textArea.textArea.setLine(currentLineOffset, newLineText);
+
+        // Update the real data with the given character
+        if (this.editorInstance.textArea.viewOffSet > 0) {
+            this.editorInstance.textArea.shadowContent[currentLineOffset] =
+                shadowLineText + character;
+        } else {
+            this.editorInstance.textArea.shadowContent[currentLineOffset] = newLineText;
+        }
+        // No cursor shift is needed since it is automatic on this case
+    }
+
+    private mainkeyHandlerAnyColumnInsert(cursor, character: string) {
+        // Variable to get the current offset number for the line the cursor is on,
+        // including the scrolling position of the textArea
+        let currentLineOffset = this.editorInstance.textArea.calculateScrollingOffset(cursor);
+
+        // Get the line of text that the cursor is sitting on minus the borders of the screen
+        let currentLineText = this.editorInstance.textArea.textArea.getLine(currentLineOffset);
+
+        // The 'true' text for the current line
+        let shadowLineText = this.editorInstance.textArea.shadowContent[currentLineOffset];
+
+        // String portion BEFORE the insert (visual, not actual)
+        let startingString = currentLineText.substring(0, cursor.x - 2);
+        // String portion AFTER the insert (this is the entire string after the cursor)
+        let endingString = currentLineText.substring(cursor.x - 2);
+
+        // Add the character in between the 2 strings
+        let newLineText = startingString + character + endingString;
+        // Set the current line to the new line with the new character inserted
+        this.editorInstance.textArea.textArea.setLine(currentLineOffset, newLineText);
+
+        // Update the real data with the given character
+        if (this.editorInstance.textArea.viewOffSet > 0) {
+            let textBeforeCursor = shadowLineText.slice(0, this.editorInstance.textArea.viewOffSet + cursor.x - 1);
+            let textAfterCursor = shadowLineText.slice(this.editorInstance.textArea.viewOffSet + cursor.x - 1)
+
+            // Insert the character into the 'true' string at the correct position
+            // The ending string can be used here since it has all information after the
+            // inserted character
+            this.editorInstance.textArea.shadowContent[currentLineOffset] =
+                textBeforeCursor + character + textAfterCursor;
+
+        } else {
+            this.editorInstance.textArea.shadowContent[currentLineOffset] = newLineText;
+        }
+
+        // Render the text change
+        this.editorInstance.screen.render();
+        // Move the cursor back to where it was before the text was added
+        this.editorInstance.program.cursorPos(cursor.y - 1, cursor.x);
     }
 
     spaceHandler() {
