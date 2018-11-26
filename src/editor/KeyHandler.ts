@@ -307,16 +307,25 @@ export default class KeyHandler {
 
             // If cursor is at the beginning of the line
             if (cursor.x == 2 && currentLineText.length >= 1) {
-                // Insert a line ABOVE the current line so the content flows down by one, but on the 'same' line
+                // Insert a line ABOVE the current line so the content flows down by one, 
+                // mimicing how a lot of editors work when the enter key is hit at the start of a line
                 this.editorInstance.textArea.textArea.insertLine(currentLineOffset, '');
                 // Render the line change
                 this.editorInstance.screen.render();
                 // Set the cursor back to the beginning of the line if not at the bottom of the textArea
                 // Y, X notation for row:column
                 if (cursor.y < this.editorInstance.screen.height - 1) this.editorInstance.program.cursorPos(cursor.y, 1);
-
+                else {
+                    // Scroll the textArea by one and pull the cursor back to the current line since the entire textArea scrolled
+                    this.editorInstance.textArea.textArea.scroll(1);
+                    this.editorInstance.program.cursorPos(cursor.y - 1, 1);
+                }
+                // Render the cursor change
+                this.editorInstance.screen.render();
                 // update the line to in the 'real' text
                 this.editorInstance.textArea.shadowContent.splice(currentLineOffset, 0, '');
+            } else if (cursor.x >= this.editorInstance.screen.width - 1) {
+                // Cursor is at the 'end' of the line (make sure to check for the viewOffset)
             }
         });
 
