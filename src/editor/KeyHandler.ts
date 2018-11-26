@@ -20,7 +20,7 @@ export default class KeyHandler {
         this.editorInstance = editorInstance;
     }
 
-    // The main keyyHandler, accepts any standard character that's not handled elsewhere.
+    // The main keyHandler, accepts any standard character that's not handled elsewhere.
     // The cursor is aquired through an argument to prevent event listener overflow from blessed
 
     // TODO: When in a scroll offset and the text is shorter than the current offset and a character
@@ -205,7 +205,7 @@ export default class KeyHandler {
     // This will insert text into the 'real' string and move the text forward one
     // so the text can keep naturally scroll and be entered properly
 
-    // NOTE: This sometimes may not work? Actual editing would need to be done
+    // NOTE: This sometimes may not work. Need to fix
     private mainKeyHandelerAdvancedEndOfLineHandler(cursor, character: string) {
         // Variable to get the current offset number for the line the cursor is on,
         // including the scrolling position of the textArea
@@ -255,11 +255,6 @@ export default class KeyHandler {
         this.editorInstance.screen.render();
         // Move the cursor back to where it was before the text was added
         this.editorInstance.program.cursorPos(cursor.y - 1, cursor.x - 1);
-    }
-
-    spaceHandler() {
-        // This will need a lot of work, should be similar to the main keyhandler
-        // NOW this should mainly use the private methods, passing a space
     }
 
     enterHandler() {

@@ -181,7 +181,11 @@ export default class TextArea {
         });
 
         this.textArea.key('space', () => {
-            this.keyHandler.spaceHandler();
+            // Determine where to insert the character that was entered based on the cursor position
+            // This callback returns an err and data object, the data object has the x/y position of the cursor
+            this.editorInstance.program.getCursor((err, cursor) => {
+                this.keyHandler.mainKeyHandler(' ', cursor);
+            });
         });
 
         this.textArea.key('home', () => {
@@ -206,7 +210,7 @@ export default class TextArea {
             this.editorInstance.program.getCursor((err, cursor) => {
 
                 return this.keyHandler.mainKeyHandler(ch, cursor);
-            })
+            });
         });
 
         // Test file writing function
