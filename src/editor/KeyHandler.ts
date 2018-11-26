@@ -229,8 +229,8 @@ export default class KeyHandler {
         // Render the text change
         this.editorInstance.screen.render();
 
-        let textBeforeCursor = shadowLineText.slice(0, this.editorInstance.textArea.viewOffSet + cursor.x - 2);
-        let textAfterCursor = shadowLineText.slice(this.editorInstance.textArea.viewOffSet + cursor.x - 2);
+        let textBeforeCursor = shadowLineText.slice(0, this.editorInstance.textArea.viewOffSet + cursor.x - 1);
+        let textAfterCursor = shadowLineText.slice(this.editorInstance.textArea.viewOffSet + cursor.x - 1);
 
         // Update the real data with the given character
         if (this.editorInstance.textArea.viewOffSet > 0) {
