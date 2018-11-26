@@ -30,29 +30,31 @@ export default class KeyHandler {
     mainKeyHandler(character, cursor) {
         // This is where all 'standard' keys go (keys not handled elsewhere)
 
+        // If the cursor is less than the right visual bound of the textArea
         if (cursor.x < this.editorInstance.screen.width - 1) {
-
             // Variable to get the current offset number for the line the cursor is on,
             // including the scrolling position of the textArea
             let currentLineOffset = this.editorInstance.textArea.calculateScrollingOffset(cursor);
 
-            // Get the line of text that the cursor is sitting on minus the borders of the screen
+            // Get the line of text that the cursor is on minus the borders of the screen
             let currentLineText = this.editorInstance.textArea.textArea.getLine(currentLineOffset);
 
             // If there's no text to begin with, this check should avoid text going onto a new line
             if (cursor.x == 2 && currentLineText.length < 1) {
                 this.mainKeyHandlerBlankLine(cursor, character);
             }
-            // If cursor is at the beginning of the line, this will
-            // move the rest of the text forward and insert the character
+            // If the cursor is at the beginning of the line, this will insert the character
+            // at the start of the line in front of all other text
             else if (cursor.x == 2 && currentLineText.length > 1) {
                 this.mainkeyHandlerFirstColumnInsert(cursor, character);
             }
-            // If the cursor is at the end
+            // If the cursor is at the end, the character will be inserted
+            // in between the text before and after the cursor and the view will shift
             else if (cursor.x >= currentLineText.length + 1) {
                 this.mainkeyHandlerBasicEndOfLineHandler(cursor, character);
             }
-            // If the cursor is somehwere in the middle (it's an insert)
+            // If the cursor is somehwere in the middle of the textArea, it's an insert
+            // and the character will be inserted in between the text before and after the cursor
             else {
                 this.mainkeyHandlerAnyColumnInsert(cursor, character);
             }
@@ -88,12 +90,14 @@ export default class KeyHandler {
         // No cursor shift is needed since it is automatic on this case
     }
 
+    // TODO: when the view is more than the current line's length and doesn't show,
+    // 'snap' the view back to the column where the text is being entered
     private mainkeyHandlerFirstColumnInsert(cursor, character: string) {
         // Variable to get the current offset number for the line the cursor is on,
         // including the scrolling position of the textArea
         let currentLineOffset = this.editorInstance.textArea.calculateScrollingOffset(cursor);
 
-        // Get the line of text that the cursor is sitting on minus the borders of the screen
+        // Get the line of text that the cursor is  on minus the borders of the screen
         let currentLineText = this.editorInstance.textArea.textArea.getLine(currentLineOffset);
 
         // The 'true' text for the current line
@@ -139,7 +143,7 @@ export default class KeyHandler {
         // including the scrolling position of the textArea
         let currentLineOffset = this.editorInstance.textArea.calculateScrollingOffset(cursor);
 
-        // Get the line of text that the cursor is sitting on minus the borders of the screen
+        // Get the line of text that the cursor is  on minus the borders of the screen
         let currentLineText = this.editorInstance.textArea.textArea.getLine(currentLineOffset);
 
         // The 'true' text for the current line
@@ -165,7 +169,7 @@ export default class KeyHandler {
         // including the scrolling position of the textArea
         let currentLineOffset = this.editorInstance.textArea.calculateScrollingOffset(cursor);
 
-        // Get the line of text that the cursor is sitting on minus the borders of the screen
+        // Get the line of text that the cursor is  on minus the borders of the screen
         let currentLineText = this.editorInstance.textArea.textArea.getLine(currentLineOffset);
 
         // The 'true' text for the current line
@@ -211,7 +215,7 @@ export default class KeyHandler {
         // including the scrolling position of the textArea
         let currentLineOffset = this.editorInstance.textArea.calculateScrollingOffset(cursor);
 
-        // Get the line of text that the cursor is sitting on minus the borders of the screen
+        // Get the line of text that the cursor is  on minus the borders of the screen
         let currentLineText = this.editorInstance.textArea.textArea.getLine(currentLineOffset);
 
         // The 'true' text for the current line
@@ -445,7 +449,7 @@ export default class KeyHandler {
             // including the scrolling position of the textArea
             let currentLineOffset = this.editorInstance.textArea.calculateScrollingOffset(cursor);
 
-            // Get the line of text that the cursor is sitting on minus the borders of the screen
+            // Get the line of text that the cursor is  on minus the borders of the screen
             let currentLineText = this.editorInstance.textArea.textArea.getLine(currentLineOffset);
 
             // Shadow line is the 'true' line, not just the edit view
