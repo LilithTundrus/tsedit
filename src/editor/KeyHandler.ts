@@ -292,7 +292,34 @@ export default class KeyHandler {
     }
 
     enterHandler() {
-        // This will need a lot of work, should be similar to the main keyhandler
+        this.editorInstance.program.getCursor((err, cursor) => {
+            // Variable to get the current offset number for the line the cursor is on,
+            // including the scrolling position of the textArea
+            let currentLineOffset = this.editorInstance.textArea.calculateScrollingOffset(cursor);
+
+            // Get the line of text that the cursor is  on minus the borders of the screen
+            let currentLineText = this.editorInstance.textArea.textArea.getLine(currentLineOffset);
+
+            // The 'true' text for the current line
+            let shadowLineText = this.editorInstance.textArea.shadowContent[currentLineOffset];
+
+            // This will need a lot of work, should be similar to the main keyhandler
+
+            // If cursor is at the beginning of the line
+            if (cursor.x == 2 && currentLineText.length >= 1) {
+                // Insert a line ABOVE the current line so the content flows down by one, but on the 'same' line
+                this.editorInstance.textArea.textArea.insertLine(currentLineOffset, '');
+                // Render the line change
+                this.editorInstance.screen.render();
+                // Set the cursor back to the beginning of the line if not at the bottom of the textArea
+                // Y, X notation for row:column
+                if (cursor.y < this.editorInstance.screen.height - 1) this.editorInstance.program.cursorPos(cursor.y, 1);
+
+                // update the line to in the 'real' text
+                this.editorInstance.textArea.shadowContent.splice(currentLineOffset, 0, '');
+            }
+        });
+
     }
 
     tabHandler() {

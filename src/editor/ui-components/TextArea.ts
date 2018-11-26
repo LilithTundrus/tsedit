@@ -196,6 +196,11 @@ export default class TextArea {
             this.keyHandler.endHandler();
         });
 
+        this.textArea.key('enter', () => {
+            this.keyHandler.enterHandler();
+        });
+
+
         this.textArea.on('keypress', (ch, key) => {
             // Return on undefined, these are keys we can handle elsewhere 
             // (undefined means it isn't a display character)
