@@ -203,7 +203,9 @@ export default class KeyHandler {
     }
 
     // This will insert text into the 'real' string and move the text forward one
-    // so the text can keep naturally scroll and be entered properlyE
+    // so the text can keep naturally scroll and be entered properly
+
+    // NOTE: This sometimes may not work? Actual editing would need to be done
     private mainKeyHandelerAdvancedEndOfLineHandler(cursor, character: string) {
         // Variable to get the current offset number for the line the cursor is on,
         // including the scrolling position of the textArea
@@ -221,16 +223,18 @@ export default class KeyHandler {
         let endingString = currentLineText.substring(cursor.x - 2);
 
         // Add the character in between the 2 strings
-        let newLineText = startingString + character;
+        let newLineText = startingString + character + endingString;
 
         this.editorInstance.textArea.textArea.setLine(currentLineOffset, newLineText);
         // Render the text change
         this.editorInstance.screen.render();
 
+        let textBeforeCursor = shadowLineText.slice(0, this.editorInstance.textArea.viewOffSet + cursor.x - 2);
+        let textAfterCursor = shadowLineText.slice(this.editorInstance.textArea.viewOffSet + cursor.x - 2);
+
         // Update the real data with the given character
         if (this.editorInstance.textArea.viewOffSet > 0) {
-            let textBeforeCursor = shadowLineText.slice(0, this.editorInstance.textArea.viewOffSet + cursor.x - 1);
-            let textAfterCursor = shadowLineText.slice(this.editorInstance.textArea.viewOffSet + cursor.x - 1)
+
 
             // Insert the character into the 'true' string at the correct position
             // The ending string can be used here since it has all information after the
@@ -240,7 +244,9 @@ export default class KeyHandler {
             this.editorInstance.textArea.rightshiftText();
             this.editorInstance.textArea.viewOffSet++;
         } else {
-            this.editorInstance.textArea.shadowContent[currentLineOffset] = newLineText;
+            this.editorInstance.textArea.shadowContent[currentLineOffset] = //newLineText;
+                textBeforeCursor + character + textAfterCursor;
+
             this.editorInstance.textArea.rightshiftText();
             this.editorInstance.textArea.viewOffSet++;
         }
@@ -248,11 +254,12 @@ export default class KeyHandler {
         // Render the text change
         this.editorInstance.screen.render();
         // Move the cursor back to where it was before the text was added
-        this.editorInstance.program.cursorPos(cursor.y - 1, cursor.x);
+        this.editorInstance.program.cursorPos(cursor.y - 1, cursor.x - 1);
     }
 
     spaceHandler() {
         // This will need a lot of work, should be similar to the main keyhandler
+        // NOW this should mainly use the private methods, passing a space
     }
 
     enterHandler() {
