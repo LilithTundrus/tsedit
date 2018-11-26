@@ -62,6 +62,7 @@ export default class KeyHandler {
             this.editorInstance.screen.render();
         } else {
             // Shift the horizontal scroll 1 to the right and add the character
+            // to the current line.
             this.mainKeyHandelerAdvancedEndOfLineHandler(cursor, character);
         }
     }
@@ -75,19 +76,24 @@ export default class KeyHandler {
         // The 'true' text for the current line
         let shadowLineText = this.editorInstance.textArea.shadowContent[currentLineOffset];
 
-        // Update the real data with the given character
         if (this.editorInstance.textArea.viewOffSet > 0) {
+            // Update the real data with the given character
             this.editorInstance.textArea.shadowContent[currentLineOffset] =
                 shadowLineText.slice(0, this.editorInstance.textArea.viewOffSet) + character +
                 shadowLineText.slice(this.editorInstance.textArea.viewOffSet)
         } else {
+            // The character should be the only thing to be added to the line since the
+            // view offset is zero
             this.editorInstance.textArea.shadowContent[currentLineOffset] = character;
         }
-        // Add the character to the beginning of the line
+        // Add the character to the beginning of the line in the view window
         this.editorInstance.textArea.textArea.setLine(currentLineOffset, character);
-        // Render the text change
+        // Render the text change/any other changes
         this.editorInstance.screen.render();
-        // No cursor shift is needed since it is automatic on this case
+
+        // Specific to the space key, the cursor does not automatically move forward
+        if (character === ' ') this.editorInstance.program.cursorForward();
+        // Else, no cursor shift is needed since it is automatic in most cases
     }
 
     // TODO: when the view is more than the current line's length and doesn't show,
@@ -106,13 +112,21 @@ export default class KeyHandler {
         // Add the character to the beginning of the line
         let newLineText = character + currentLineText;
 
+        // Function-scoped view offset shortcuts and calculated cusor
+        let localViewOffset = this.editorInstance.textArea.viewOffSet;
+        let cursorOffset = cursor.x - 1;
+
+        // Text BEFORE the cursor
+        let preText = shadowLineText.slice(0, localViewOffset + cursorOffset);
+        // Text AFTER the cursor
+        let postText = shadowLineText.slice(localViewOffset + cursorOffset);
+
         // Update the real data with the given character
         if (this.editorInstance.textArea.viewOffSet > 0) {
             if (shadowLineText.length > this.editorInstance.textArea.viewOffSet) {
                 // Make sure the insert occurs correctly, even when the view is shifted
                 this.editorInstance.textArea.shadowContent[currentLineOffset] =
-                    shadowLineText.slice(0, this.editorInstance.textArea.viewOffSet + cursor.x - 1) + character
-                    + shadowLineText.slice(this.editorInstance.textArea.viewOffSet + cursor.x - 1)
+                    preText + character + postText;
                 this.editorInstance.textArea.textArea.setLine(currentLineOffset, newLineText);
                 this.editorInstance.textArea.leftShiftText();
                 this.editorInstance.textArea.viewOffSet--;
@@ -156,12 +170,18 @@ export default class KeyHandler {
 
         // Update the real data with the given character
         if (this.editorInstance.textArea.viewOffSet > 0) {
-            this.editorInstance.textArea.shadowContent[currentLineOffset] =
-                shadowLineText + character;
+            let newText = shadowLineText + character;
+            this.editorInstance.textArea.shadowContent[currentLineOffset] = newText;
         } else {
-            this.editorInstance.textArea.shadowContent[currentLineOffset] = newLineText;
+            let newText = shadowLineText + character;
+            this.editorInstance.textArea.shadowContent[currentLineOffset] = newText;
         }
-        // No cursor shift is needed since it is automatic on this case
+        // Render the text change/any other changes
+        this.editorInstance.screen.render();
+
+        // Specific to the space key, the cursor does not automatically move forward
+        if (character === ' ') this.editorInstance.program.cursorForward();
+        // Else, no cursor shift is needed since it is automatic in most cases
     }
 
     private mainkeyHandlerAnyColumnInsert(cursor, character: string) {
