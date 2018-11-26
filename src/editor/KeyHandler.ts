@@ -116,9 +116,9 @@ export default class KeyHandler {
         let localViewOffset = this.editorInstance.textArea.viewOffSet;
         let cursorOffset = cursor.x - 1;
 
-        // Text BEFORE the cursor
+        // REAL Text BEFORE the cursor
         let preText = shadowLineText.slice(0, localViewOffset + cursorOffset);
-        // Text AFTER the cursor
+        // REAL Text AFTERthe cursor
         let postText = shadowLineText.slice(localViewOffset + cursorOffset);
 
         // Update the real data with the given character
@@ -210,9 +210,9 @@ export default class KeyHandler {
         let localViewOffset = this.editorInstance.textArea.viewOffSet;
         let cursorOffset = cursor.x - 1;
 
-        // Text BEFORE the cursor
+        // REAL Text BEFORE the cursor
         let preText = shadowLineText.slice(0, localViewOffset + cursorOffset);
-        // Text AFTER the cursor
+        // REAL Text AFTERthe cursor
         let postText = shadowLineText.slice(localViewOffset + cursorOffset);
 
         // Update the real data with the given character
@@ -252,30 +252,34 @@ export default class KeyHandler {
         // String portion AFTER the insert (this is the entire string after the cursor)
         let endingString = currentLineText.substring(cursor.x - 2);
 
-        // Add the character in between the 2 strings
+        // Add the character in between the 2 strings visually
         let newLineText = startingString + character + endingString;
+
+        // Function-scoped view offset shortcuts and calculated cusor offset
+        let localViewOffset = this.editorInstance.textArea.viewOffSet;
+        let cursorOffset = cursor.x - 1;
+
+        // REAL Text BEFORE the cursor
+        let preText = shadowLineText.slice(0, localViewOffset + cursorOffset);
+        // REAL Text AFTERthe cursor
+        let postText = shadowLineText.slice(localViewOffset + cursorOffset);
 
         this.editorInstance.textArea.textArea.setLine(currentLineOffset, newLineText);
         // Render the text change
         this.editorInstance.screen.render();
 
-        let textBeforeCursor = shadowLineText.slice(0, this.editorInstance.textArea.viewOffSet + cursor.x - 1);
-        let textAfterCursor = shadowLineText.slice(this.editorInstance.textArea.viewOffSet + cursor.x - 1);
-
         // Update the real data with the given character
         if (this.editorInstance.textArea.viewOffSet > 0) {
-
-
             // Insert the character into the 'true' string at the correct position
             // The ending string can be used here since it has all information after the
             // inserted character
             this.editorInstance.textArea.shadowContent[currentLineOffset] =
-                textBeforeCursor + character + textAfterCursor;
+                preText + character + postText;
             this.editorInstance.textArea.rightshiftText();
             this.editorInstance.textArea.viewOffSet++;
         } else {
-            this.editorInstance.textArea.shadowContent[currentLineOffset] = //newLineText;
-                textBeforeCursor + character + textAfterCursor;
+            this.editorInstance.textArea.shadowContent[currentLineOffset] =
+                preText + character + postText;
 
             this.editorInstance.textArea.rightshiftText();
             this.editorInstance.textArea.viewOffSet++;
