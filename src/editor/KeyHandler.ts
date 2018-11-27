@@ -291,6 +291,8 @@ export default class KeyHandler {
         this.editorInstance.program.cursorPos(cursor.y - 1, cursor.x - 1);
     }
 
+    // TODO: this will need to eventually adjuset the viewing offset accordingly when
+    // entering a new line below a line longer than the viewing offsets
     enterHandler() {
         this.editorInstance.program.getCursor((err, cursor) => {
             // Variable to get the current offset number for the line the cursor is on,
@@ -303,7 +305,6 @@ export default class KeyHandler {
             // The 'true' text for the current line
             let shadowLineText = this.editorInstance.textArea.shadowContent[currentLineOffset];
 
-            // This will need a lot of work, should be similar to the main keyhandler
 
             // If cursor is at the beginning of the line
             if (cursor.x == 2 && currentLineText.length >= 1) {
@@ -324,8 +325,31 @@ export default class KeyHandler {
                 this.editorInstance.screen.render();
                 // update the line to in the 'real' text
                 this.editorInstance.textArea.shadowContent.splice(currentLineOffset, 0, '');
-            } else if (cursor.x >= this.editorInstance.screen.width - 1) {
-                // Cursor is at the 'end' of the line (make sure to check for the viewOffset)
+            }
+            // Cursor is at the 'end' of the line (make sure to check for the viewOffset)
+            else if (cursor.x >= this.editorInstance.screen.width - 1) {
+                if (this.editorInstance.textArea.viewOffSet > 0) {
+
+                } else {
+                    // In this case, the line is just as long as the viewing window, but it should
+                    // just create a blank line below the current one
+
+                    // Insert a line BELOW the current line so the content flows down by one, 
+                    // mimicing how a lot of editors work when the enter key is hit at the start of a line
+                    this.editorInstance.textArea.textArea.insertLine(currentLineOffset + 1, '');
+                    // Render the line change
+                    this.editorInstance.screen.render();
+                    // Set the cursor back to the beginning of the line if not at the bottom of the textArea
+                    // Y, X notation for row:column
+
+                    // Scroll the textArea by one and pull the cursor back to the current line since the entire textArea scrolled
+                    // this.editorInstance.textArea.textArea.scroll(1);
+                    this.editorInstance.program.cursorPos(cursor.y, 1);
+                    this.editorInstance.textArea.shadowContent.splice(currentLineOffset + 1, 0, '');
+                }
+            } else {
+                // Cursor is in the middle somewhere, a check for the viewoffset still needs to occur
+                // along with handling when the line 
             }
         });
 
