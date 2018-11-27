@@ -640,6 +640,8 @@ export default class KeyHandler {
                 this.editorInstance.program.cursorUp();
                 // Render the cursor change
                 this.editorInstance.screen.render();
+                this.editorInstance.textArea.verticalScrollOffset--;
+
             }
             // Scroll the text up by one line if the textarea isn't at 0% scroll
             else if (cursor.y == 3 && this.editorInstance.textArea.textArea.getScrollPerc() > 0) {
@@ -681,6 +683,8 @@ export default class KeyHandler {
                 // If the cursor isn't at the bottom of the textArea, move it down by one
                 this.editorInstance.program.cursorDown();
                 this.editorInstance.screen.render();
+                this.editorInstance.textArea.verticalScrollOffset++;
+
             }
             // Scroll the text down by one if the cursor is at the bottom of the textArea
             else if (cursor.y == this.editorInstance.screen.height - 1) {

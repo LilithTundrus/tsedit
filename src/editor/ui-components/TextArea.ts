@@ -269,7 +269,7 @@ export default class TextArea {
         let visibleLines = this.getVisibleLines();
 
         // Get the previous line index to what is currently visible
-        let previousVisibleLineIndex = this.verticalScrollOffset - 1 + visibleLines.length - 1;
+        let previousVisibleLineIndex = /* this.verticalScrollOffset - 1 + */ visibleLines.length - 1;
 
         // Get the 'true' text of the next line, plus the view offset
         let trueContent = this.shadowContent[previousVisibleLineIndex].substring(this.viewOffSet);
@@ -286,7 +286,7 @@ export default class TextArea {
         // Get all currently visible lines as an array
         let visibleLines = this.getVisibleLines();
         // Get the next line index to what is currently visible
-        let nextVisibleLineIndex = visibleLines.length + this.verticalScrollOffset - 1;
+        let nextVisibleLineIndex = /* visibleLines.length  +*/ this.verticalScrollOffset - 1;
 
         // Get the 'true' text of the next line, plus the view offset
         let trueContent = this.shadowContent[nextVisibleLineIndex].substring(this.viewOffSet);
@@ -353,6 +353,22 @@ export default class TextArea {
         return visibleLines;
     }
 
+    // // Basic function to get the scrolling cursor offset (used frequently for each key)
+    // calculateScrollingOffset(cursor) {
+    //     // Get the cursor position relative to the textArea (minus the menubar and the texarea's borders)
+    //     let cursorYRelative = cursor.y - 3;
+    //     // Position of the cursor relative to the BOTTOM of the textArea
+    //     let cursorYFromRelativeBottom = this.textArea.height - cursorYRelative;
+
+    //     // getscroll() is the LAST line of the textarea
+    //     // For some the cursor.y relative offset must be removed (add 3)
+    //     let currentLineScrollOffset = this.textArea.getScroll() - cursorYFromRelativeBottom + 3;
+
+    //     if (this.textArea.getScroll() == 0) currentLineScrollOffset = cursorYRelative;
+
+    //     return currentLineScrollOffset;
+    // }
+
     // Basic function to get the scrolling cursor offset (used frequently for each key)
     calculateScrollingOffset(cursor) {
         // Get the cursor position relative to the textArea (minus the menubar and the texarea's borders)
@@ -366,6 +382,6 @@ export default class TextArea {
 
         if (this.textArea.getScroll() == 0) currentLineScrollOffset = cursorYRelative;
 
-        return currentLineScrollOffset;
+        return this.verticalScrollOffset;
     }
 }
