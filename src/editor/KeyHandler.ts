@@ -370,16 +370,18 @@ export default class KeyHandler {
 
             // Insert the new line BELOW the current line so the content flows down by one,
             // copying how a lot of editors work when enter is hit at the start of a line
-            this.editorInstance.textArea.textArea.insertLine(currentLineOffset + 1, shadowLineText);
+            this.editorInstance.textArea.textArea.insertLine(currentLineOffset + 1, postText);
 
 
             // Render the line changes
             this.editorInstance.screen.render();
 
             // Update the current 'real' lines 
-            this.editorInstance.textArea.shadowContent[currentLineOffset] = shadowLineText;
-            this.editorInstance.textArea.shadowContent.splice(currentLineOffset, 0, shadowLineText);
+            this.editorInstance.textArea.shadowContent[currentLineOffset] = preText;
+            this.editorInstance.textArea.shadowContent.splice(currentLineOffset + 1, 0, postText);
 
+            this.editorInstance.textArea.leftShiftText(localViewOffset);
+            this.editorInstance.textArea.viewOffSet = 0;
 
             // Render the line changes
             this.editorInstance.screen.render();
