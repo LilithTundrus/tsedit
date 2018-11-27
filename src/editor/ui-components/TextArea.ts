@@ -240,7 +240,9 @@ export default class TextArea {
             // The 'true' text is the same index in the shadowContent array
             let trueText = this.shadowContent[currentLineIndex];
             // Set the current line to the 'true' text by 1 to the left
-            this.textArea.setLine(currentLineIndex, trueText.substring(this.viewOffSet - ammount));
+            if (this.viewOffSet !== 0) {
+                this.textArea.setLine(currentLineIndex, trueText.substring(this.viewOffSet - ammount));
+            }
         });
     }
 

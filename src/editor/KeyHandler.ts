@@ -118,7 +118,7 @@ export default class KeyHandler {
 
         // REAL Text BEFORE the cursor
         let preText = shadowLineText.slice(0, localViewOffset + cursorOffset);
-        // REAL Text AFTERthe cursor
+        // REAL Text AFTER the cursor
         let postText = shadowLineText.slice(localViewOffset + cursorOffset);
 
         // Update the real data with the given character
@@ -212,7 +212,7 @@ export default class KeyHandler {
 
         // REAL Text BEFORE the cursor
         let preText = shadowLineText.slice(0, localViewOffset + cursorOffset);
-        // REAL Text AFTERthe cursor
+        // REAL Text AFTER the cursor
         let postText = shadowLineText.slice(localViewOffset + cursorOffset);
 
         // Update the real data with the given character
@@ -261,7 +261,7 @@ export default class KeyHandler {
 
         // REAL Text BEFORE the cursor
         let preText = shadowLineText.slice(0, localViewOffset + cursorOffset);
-        // REAL Text AFTERthe cursor
+        // REAL Text AFTER the cursor
         let postText = shadowLineText.slice(localViewOffset + cursorOffset);
 
         this.editorInstance.textArea.textArea.setLine(currentLineOffset, newLineText);
@@ -349,15 +349,72 @@ export default class KeyHandler {
         // including the scrolling position of the textArea
         let currentLineOffset = this.editorInstance.textArea.calculateScrollingOffset(cursor);
 
-        // Insert a blank line ABOVE the current line so the content flows down by one,
-        // copying how a lot of editors work when enter is hit at the start of a line
-        this.editorInstance.textArea.textArea.insertLine(currentLineOffset, '');
-        // Render the line change
-        this.editorInstance.screen.render();
+        // Get the line of text that the cursor is  on minus the borders of the screen
+        let currentLineText = this.editorInstance.textArea.textArea.getLine(currentLineOffset);
+
+        // The 'true' text for the current line
+        let shadowLineText = this.editorInstance.textArea.shadowContent[currentLineOffset];
 
         if (this.editorInstance.textArea.viewOffSet > 0) {
-            // this needs to get the text before and after the current offset
+            // Function-scoped view offset shortcuts and calculated cusor offset
+            let localViewOffset = this.editorInstance.textArea.viewOffSet;
+            let cursorOffset = cursor.x - 1;
+
+            // REAL Text BEFORE the cursor
+            let preText = shadowLineText.substring(0, localViewOffset + cursorOffset);
+            // REAL Text AFTER the cursor
+            let postText = shadowLineText.substring(localViewOffset + cursorOffset);
+
+            // NOTE: this offset calculation may correct!!!
+            this.editorInstance.textArea.viewOffSet == 0;
+
+            this.editorInstance.textArea.reformTextDownArrow();
+            // Render the change
+            this.editorInstance.screen.render();
+
+            // Insert the new line BELOW the current line so the content flows down by one,
+            // copying how a lot of editors work when enter is hit at the start of a line
+            this.editorInstance.textArea.textArea.insertLine(currentLineOffset + 1, shadowLineText);
+
+
+            // Render the line changes
+            this.editorInstance.screen.render();
+
+            // Update the current 'real' lines 
+            this.editorInstance.textArea.shadowContent[currentLineOffset] = shadowLineText;
+            this.editorInstance.textArea.shadowContent.splice(currentLineOffset, 0, shadowLineText);
+
+
+            // Render the line changes
+            this.editorInstance.screen.render();
+
+
+
+            // Set the cursor back to the beginning of the current line if 
+            // it is not at the bottom of the textArea
+            if (cursor.y < this.editorInstance.screen.height - 1) {
+                this.editorInstance.program.cursorPos(cursor.y, 1);
+            }
+            else {
+                // Scroll the textArea by one
+                this.editorInstance.textArea.textArea.scroll(1);
+                // Put the cursor at the start of the current line
+                this.editorInstance.program.cursorPos(cursor.y - 1, 1);
+                // Increase the verticalScrollOffset by one to match the blessed scroll index
+                this.editorInstance.textArea.verticalScrollOffset++;
+            }
+
+            // Render the cursor change
+            this.editorInstance.screen.render();
+
         } else {
+
+            // Insert a blank line ABOVE the current line so the content flows down by one,
+            // copying how a lot of editors work when enter is hit at the start of a line
+            this.editorInstance.textArea.textArea.insertLine(currentLineOffset, '');
+            // Render the line change
+            this.editorInstance.screen.render();
+
             // Set the cursor back to the beginning of the current line if 
             // it is not at the bottom of the textArea
             if (cursor.y < this.editorInstance.screen.height - 1) {
