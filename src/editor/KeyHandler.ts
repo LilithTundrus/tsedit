@@ -305,12 +305,10 @@ export default class KeyHandler {
             // including the scrolling position of the textArea
             let currentLineOffset = this.editorInstance.textArea.calculateScrollingOffset(cursor);
 
-            // Get the line of text that the cursor is  on minus the borders of the screen
-            let currentLineText = this.editorInstance.textArea.textArea.getLine(currentLineOffset);
-
             // If cursor is at the beginning of the line
             if (cursor.x == 2) {
                 this.enterHandlerStartOfLine(cursor);
+                this.editorInstance.textArea.verticalScrollOffset++;
             }
             // Cursor is at the 'end' of the line (still checks for the viewOffset)
             else if (cursor.x >= this.editorInstance.screen.width - 1) {
@@ -336,7 +334,6 @@ export default class KeyHandler {
                         // Put the cursor at the start of the current line
                         this.editorInstance.program.cursorPos(cursor.y - 1, 1);
                         // Increase the verticalScrollOffset by one to match the blessed scroll index
-                        this.editorInstance.textArea.verticalScrollOffset++;
                     }
                     let nextLineIndex = currentLineOffset + 1;
                     this.editorInstance.textArea.shadowContent.splice(nextLineIndex, 0, '');
@@ -347,6 +344,8 @@ export default class KeyHandler {
                 // Cursor is in the middle somewhere, a check for the viewoffset still needs to occur
                 // along with handling when the line
                 this.enterHandlerAnyColumnInsert(cursor);
+                this.editorInstance.textArea.verticalScrollOffset++;
+
             }
         });
     }
@@ -480,7 +479,7 @@ export default class KeyHandler {
                 // Put the cursor at the start of the current line
                 this.editorInstance.program.cursorPos(cursor.y - 1, 1);
                 // Increase the verticalScrollOffset by one to match the blessed scroll index
-                this.editorInstance.textArea.verticalScrollOffset++;
+                // this.editorInstance.textArea.verticalScrollOffset++;
             }
 
             // Render the cursor change
