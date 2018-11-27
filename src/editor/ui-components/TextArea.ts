@@ -240,7 +240,11 @@ export default class TextArea {
             // The 'true' text is the same index in the shadowContent array
             let trueText = this.shadowContent[currentLineIndex];
             // Set the current line to the 'true' text by 1 to the left
-            this.textArea.setLine(currentLineIndex, trueText.substring(this.viewOffSet - ammount));
+            if (this.viewOffSet == 0) {
+                this.textArea.setLine(currentLineIndex, trueText.substring(0));
+            } else {
+                this.textArea.setLine(currentLineIndex, trueText.substring(this.viewOffSet - ammount));
+            }
         });
     }
 
@@ -261,8 +265,11 @@ export default class TextArea {
     // This function ensures that on a vertical scroll, the next line is still on the right
     // horizontal view offset
     reformTextUpArrow() {
+        // Get all currently visible lines as an array
+        let visibleLines = this.getVisibleLines();
+
         // Get the previous line index to what is currently visible
-        let previousVisibleLineIndex = this.verticalScrollOffset - 1;
+        let previousVisibleLineIndex = this.verticalScrollOffset - 1 + visibleLines.length - 1;
 
         // Get the 'true' text of the next line, plus the view offset
         let trueContent = this.shadowContent[previousVisibleLineIndex].substring(this.viewOffSet);
@@ -272,11 +279,14 @@ export default class TextArea {
 
     // This function ensures that on a vertical scroll, the previous line is still on the right
     // horizontal view offset
+
+    // NOTE: the offset is off by around 20 (or the height of the textarea) after scrolling to the bottom
+    // portions of the screen
     reformTextDownArrow() {
         // Get all currently visible lines as an array
         let visibleLines = this.getVisibleLines();
         // Get the next line index to what is currently visible
-        let nextVisibleLineIndex = visibleLines.length + this.verticalScrollOffset;
+        let nextVisibleLineIndex = visibleLines.length + this.verticalScrollOffset - 1;
 
         // Get the 'true' text of the next line, plus the view offset
         let trueContent = this.shadowContent[nextVisibleLineIndex].substring(this.viewOffSet);
