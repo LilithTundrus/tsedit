@@ -365,10 +365,6 @@ export default class KeyHandler {
             // REAL Text AFTER the cursor
             let postText = shadowLineText.substring(localViewOffset + cursorOffset);
 
-            // NOTE: this offset calculation may correct!!!
-            this.editorInstance.textArea.viewOffSet == 0;
-
-            this.editorInstance.textArea.reformTextDownArrow();
             // Render the change
             this.editorInstance.screen.render();
 
@@ -640,6 +636,7 @@ export default class KeyHandler {
 
                     // Right shift the text by the length of the current line minus the view window
                     this.editorInstance.textArea.rightshiftText(claculatedShiftAmmount);
+
                     // Render the text shift
                     this.editorInstance.screen.render();
                     // Keep the cursor right against the right bound of the textArea
@@ -649,7 +646,7 @@ export default class KeyHandler {
                     // Render the cursor change
                     this.editorInstance.screen.render();
                     // Set the actual offset value to the length of the line
-                    this.editorInstance.textArea.viewOffSet = currentShadowLineLength - 1;
+                    this.editorInstance.textArea.viewOffSet = currentShadowLineLength;
                 }
             }
             // No calculation needs to be made to account for the current offset since it's zero
