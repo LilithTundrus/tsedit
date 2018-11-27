@@ -277,7 +277,7 @@ export default class TextArea {
         let visibleLines = this.getVisibleLines();
         // Get the next line index to what is currently visible
         let nextVisibleLineIndex = visibleLines.length + this.verticalScrollOffset;
-        
+
         // Get the 'true' text of the next line, plus the view offset
         let trueContent = this.shadowContent[nextVisibleLineIndex].substring(this.viewOffSet);
         // Set the line to the 'true' content before it is seen
