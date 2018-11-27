@@ -320,11 +320,15 @@ export default class KeyHandler {
                     // Scroll the textArea by one and pull the cursor back to the current line since the entire textArea scrolled
                     this.editorInstance.textArea.textArea.scroll(1);
                     this.editorInstance.program.cursorPos(cursor.y - 1, 1);
+                    // Increase the verticalScrollOffset by one to match the blessed scroll index
+                    this.editorInstance.textArea.verticalScrollOffset++;
                 }
                 // Render the cursor change
                 this.editorInstance.screen.render();
                 // update the line to in the 'real' text
                 this.editorInstance.textArea.shadowContent.splice(currentLineOffset, 0, '');
+
+
             }
             // Cursor is at the 'end' of the line (make sure to check for the viewOffset)
             else if (cursor.x >= this.editorInstance.screen.width - 1) {
@@ -343,9 +347,19 @@ export default class KeyHandler {
                     // Y, X notation for row:column
 
                     // Scroll the textArea by one and pull the cursor back to the current line since the entire textArea scrolled
-                    // this.editorInstance.textArea.textArea.scroll(1);
-                    this.editorInstance.program.cursorPos(cursor.y, 1);
+                    // Set the cursor back to the beginning of the line if not at the bottom of the textArea
+                    // Y, X notation for row:column
+                    if (cursor.y < this.editorInstance.screen.height - 1) this.editorInstance.program.cursorPos(cursor.y, 1);
+                    else {
+                        // Scroll the textArea by one and pull the cursor back to the current line since the entire textArea scrolled
+                        this.editorInstance.textArea.textArea.scroll(1);
+                        this.editorInstance.program.cursorPos(cursor.y - 1, 1);
+                        // Increase the verticalScrollOffset by one to match the blessed scroll index
+                        this.editorInstance.textArea.verticalScrollOffset++;
+                    }
                     this.editorInstance.textArea.shadowContent.splice(currentLineOffset + 1, 0, '');
+                    // Render the line change
+                    this.editorInstance.screen.render();
                 }
             } else {
                 // Cursor is in the middle somewhere, a check for the viewoffset still needs to occur

@@ -263,6 +263,7 @@ export default class TextArea {
     reformTextUpArrow() {
         // Get the previous line index to what is currently visible
         let previousVisibleLineIndex = this.verticalScrollOffset - 1;
+
         // Get the 'true' text of the next line, plus the view offset
         let trueContent = this.shadowContent[previousVisibleLineIndex].substring(this.viewOffSet);
         // Set the line to the 'true' content before it is seen
@@ -276,6 +277,7 @@ export default class TextArea {
         let visibleLines = this.getVisibleLines();
         // Get the next line index to what is currently visible
         let nextVisibleLineIndex = visibleLines.length + this.verticalScrollOffset;
+        
         // Get the 'true' text of the next line, plus the view offset
         let trueContent = this.shadowContent[nextVisibleLineIndex].substring(this.viewOffSet);
         // Set the line to the 'true' content before it is seen
