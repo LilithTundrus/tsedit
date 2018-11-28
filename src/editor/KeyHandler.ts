@@ -27,6 +27,7 @@ export default class KeyHandler {
 
     // TODO: When in a scroll offset and the text is shorter than the current offset and a character
     // is inserted on that line, make sure the view snaps back to that line
+    // This needs to happen for ALL key handlers
 
     // TODO: TEST ALL OF THIS A LOT
     mainKeyHandler(character, cursor) {
@@ -69,7 +70,7 @@ export default class KeyHandler {
         }
     }
 
-    // This is literally only handling blank lines, and for one character
+    // This is literally only handling 'blank' lines, and for one character
     private mainKeyHandlerBlankLine(cursor, character: string) {
         // Variable to get the current offset number for the line the cursor is on,
         // including the scrolling position of the textArea
@@ -78,8 +79,9 @@ export default class KeyHandler {
         // The 'true' text for the current line
         let shadowLineText = this.editorInstance.textArea.shadowContent[currentLineOffset];
 
+        // If the viewOffset is not zero, the line may not be actually blank
         if (this.editorInstance.textArea.viewOffSet > 0) {
-            // Update the real data with the given character
+            // Update the real data with the given character at the proper position
             this.editorInstance.textArea.shadowContent[currentLineOffset] =
                 shadowLineText.slice(0, this.editorInstance.textArea.viewOffSet) + character +
                 shadowLineText.slice(this.editorInstance.textArea.viewOffSet)
@@ -123,13 +125,16 @@ export default class KeyHandler {
         // REAL Text AFTER the cursor
         let postText = shadowLineText.slice(localViewOffset + cursorOffset);
 
-        // Update the real data with the given character
         if (this.editorInstance.textArea.viewOffSet > 0) {
+            // If the length of the current line's text is MORE than the current viewOffset
             if (shadowLineText.length > this.editorInstance.textArea.viewOffSet) {
-                // Make sure the insert occurs correctly, even when the view is shifted
+
+                // Update the real data with the given character
                 this.editorInstance.textArea.shadowContent[currentLineOffset] =
                     preText + character + postText;
+                // Make sure the insert occurs correctly, even when the view is shifted
                 this.editorInstance.textArea.textArea.setLine(currentLineOffset, newLineText);
+                // Left shift the text so the character just inserted is visible
                 this.editorInstance.textArea.leftShiftText();
                 this.editorInstance.textArea.viewOffSet--;
                 // Render the text change
@@ -138,10 +143,11 @@ export default class KeyHandler {
                 // last position it was in before the text change
                 this.editorInstance.program.cursorPos(cursor.y - 1, cursor.x + 1);
             } else {
-                // TODO: Handle this
+                // TODO: Handle this?
             }
         }
         else {
+            // Update the real data with the given character
             this.editorInstance.textArea.shadowContent[currentLineOffset] = newLineText;
             // Update the viewable line with the given character
             this.editorInstance.textArea.textArea.setLine(currentLineOffset, newLineText);
