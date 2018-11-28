@@ -10,7 +10,8 @@ import * as fs from 'fs';
 // This file contains the class for handling key events for the Editor Class's
 // textArea UI component
 
-// TODO: The vertical offset can sometimes get broken, needs fixing!
+// TODO: Better handle the vertical offset things
+
 export default class KeyHandler {
 
     // The editorInstance allows us to access features from the Editor class instance to do things
@@ -189,11 +190,6 @@ export default class KeyHandler {
     private mainkeyHandlerAnyColumnInsert(cursor, character: string) {
         // Variable to get the current offset number for the line the cursor is on,
         // including the scrolling position of the textArea
-
-        // This sort of action may have something to do with the issue of the vertical offset being
-        // 'incorrect'
-        // Also, it seems to only occur when the offset is in between the end of the editor and the
-        // start of the editor after scrolling down and then back up
         let currentLineOffset = this.editorInstance.textArea.calculateScrollingOffset(cursor);
 
         // Get the line of text that the cursor is  on minus the borders of the screen
@@ -240,7 +236,6 @@ export default class KeyHandler {
 
     // This will insert text into the 'real' string and move the text forward one
     // so the text can keep naturally scroll and be entered properly
-
     // NOTE: This sometimes may not work. Need to fix
     private mainKeyHandelerAdvancedEndOfLineHandler(cursor, character: string) {
         // Variable to get the current offset number for the line the cursor is on,
@@ -345,7 +340,6 @@ export default class KeyHandler {
                 // along with handling when the line
                 this.enterHandlerAnyColumnInsert(cursor);
                 this.editorInstance.textArea.verticalScrollOffset++;
-
             }
         });
     }
