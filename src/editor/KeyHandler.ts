@@ -675,9 +675,6 @@ export default class KeyHandler {
                 } else {
                     // Reflow down to the next line
                     if (cursor.y < this.editorInstance.screen.height - 1) {
-
-                        this.editorInstance.screen.render();
-
                         this.editorInstance.textArea.leftShiftText(this.editorInstance.textArea.viewOffSet);
                         this.editorInstance.textArea.viewOffSet = 0;
                         // Since the cursor is on the next line, the offset needs to be updated to reflect that
@@ -699,6 +696,9 @@ export default class KeyHandler {
                             // Ensure the scroll rendered before the text reform function is called
                             this.editorInstance.screen.render();
 
+                            this.editorInstance.textArea.leftShiftText(this.editorInstance.textArea.viewOffSet);
+                            this.editorInstance.textArea.viewOffSet = 0;
+
                             // Make sure that the next line is on the right horizontal scroll index
                             this.editorInstance.textArea.reformTextDownArrow();
                             // Render the text reform
@@ -707,19 +707,18 @@ export default class KeyHandler {
                             // Keep the cursor in its previous position
                             // For some reason setting the y on this to 2 scrolls more 'smoothly' than 3
                             // (less cursor jank)
+
+                            // Render the changes
+                            this.editorInstance.screen.render();
+
                             let relativeBottomHeight = this.editorInstance.screen.height - 2;
                             this.editorInstance.program.cursorPos(relativeBottomHeight, 1);
-                            // Render the cursor change
-                            this.editorInstance.screen.render();
+
                             // Increase the verticalScrollOffset by one to match the blessed scroll index
                             this.editorInstance.textArea.verticalScrollOffset++;
                             this.editorInstance.textArea.internalVerticalOffset++;
                         }
-                        // Also make sure that if the cursor is at the bottom of the screen that ALL
-                        // of the text scrolls
                     }
-                    // Also make sure that if the cursor is at the bottom of the screen that ALL
-                    // of the text scrolls
                 }
             }
         });
