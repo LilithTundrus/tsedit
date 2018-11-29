@@ -229,6 +229,8 @@ export default class TextArea {
 
     // This will move the view of the editor 1 character to the left, using
     // the 'shadow' version of the document
+    // TODO: this needs fixing after the offset being changed to be per line!!
+
     leftShiftText(ammount?: number) {
         if (!ammount) ammount = 0;
         // Get all currently visible lines as an array
@@ -250,6 +252,8 @@ export default class TextArea {
 
     // This will move the view of the editor 1 character to the right, using
     // the 'shadow' version of the document
+    // TODO: this needs fixing after the offset being changed to be per line!!
+
     rightshiftText(ammount?: number) {
         if (!ammount) ammount = 0;
         // Get all currently visible lines as an array
@@ -286,7 +290,7 @@ export default class TextArea {
         // Get all currently visible lines as an array
         let visibleLines = this.getVisibleLines();
         // Get the next line index to what is currently visible
-        let nextVisibleLineIndex = /* visibleLines.length  +*/ this.verticalScrollOffset - 1;
+        let nextVisibleLineIndex = visibleLines.length + this.verticalScrollOffset - 1;
 
         // Get the 'true' text of the next line, plus the view offset
         let trueContent = this.shadowContent[nextVisibleLineIndex].substring(this.viewOffSet);

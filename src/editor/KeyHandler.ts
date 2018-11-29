@@ -11,6 +11,7 @@ import * as fs from 'fs';
 // textArea UI component
 
 // TODO: Better handle the vertical offset things
+// TODO: any offsets for horizontal need to be handled internally in the textarea class
 
 export default class KeyHandler {
 
@@ -159,7 +160,7 @@ export default class KeyHandler {
         }
     }
 
-    // This is only handling text insertion at the end of the line (even when viewOffset is not 0)
+    // This is only handling text insertion at the end of the line
     private mainkeyHandlerBasicEndOfLineHandler(cursor, character: string) {
         // Variable to get the current offset number for the line the cursor is on,
         // including the scrolling position of the textArea
@@ -176,14 +177,17 @@ export default class KeyHandler {
         let newLineText = currentLineText + character;
         this.editorInstance.textArea.textArea.setLine(currentLineOffset, newLineText);
 
-        // Update the real data with the given character
+        // TODO: See if these are any different, or even if this ever occurs!
         if (this.editorInstance.textArea.viewOffSet > 0) {
+            // Update the real data with the given character
             let newText = shadowLineText + character;
             this.editorInstance.textArea.shadowContent[currentLineOffset] = newText;
         } else {
+            // Update the real data with the given character
             let newText = shadowLineText + character;
             this.editorInstance.textArea.shadowContent[currentLineOffset] = newText;
         }
+
         // Render the text change/any other changes
         this.editorInstance.screen.render();
 
@@ -206,12 +210,12 @@ export default class KeyHandler {
 
         // String portion BEFORE the insert (visual, not actual)
         let startingString = currentLineText.substring(0, cursor.x - 2);
-        // String portion AFTER the insert (this is the entire string after the cursor)
+        // String portion AFTER the insert (visual, not actual)
         let endingString = currentLineText.substring(cursor.x - 2);
 
-        // Add the character in between the 2 strings
+        // Add the character in between the 2 strings 
         let newLineText = startingString + character + endingString;
-        // Set the current line to the new line with the new character inserted
+        // Set the current line to the new line with the new character inserted (visually)
         this.editorInstance.textArea.textArea.setLine(currentLineOffset, newLineText);
 
         // Function-scoped view offset shortcuts and calculated cusor offset
@@ -231,6 +235,8 @@ export default class KeyHandler {
             this.editorInstance.textArea.shadowContent[currentLineOffset] =
                 preText + character + postText;
         } else {
+            // Just set the real content to the text on screen since the real text is the same
+            // as the visual text
             this.editorInstance.textArea.shadowContent[currentLineOffset] = newLineText;
         }
 
@@ -256,10 +262,10 @@ export default class KeyHandler {
 
         // String portion BEFORE the insert (visual, not actual)
         let startingString = currentLineText.substring(0, cursor.x - 2);
-        // String portion AFTER the insert (this is the entire string after the cursor)
+        // String portion AFTER the insert (visual, not actual)
         let endingString = currentLineText.substring(cursor.x - 2);
 
-        // Add the character in between the 2 strings visually
+        // Add the character in between the 2 strings (visually)
         let newLineText = startingString + character + endingString;
 
         // Function-scoped view offset shortcuts and calculated cusor offset
@@ -271,6 +277,7 @@ export default class KeyHandler {
         // REAL Text AFTER the cursor
         let postText = shadowLineText.slice(localViewOffset + cursorOffset);
 
+        // Set the current line to the new line with the new character inserted (visually)
         this.editorInstance.textArea.textArea.setLine(currentLineOffset, newLineText);
         // Render the text change
         this.editorInstance.screen.render();
@@ -285,10 +292,15 @@ export default class KeyHandler {
             this.editorInstance.textArea.rightshiftText();
             this.editorInstance.textArea.viewOffSet++;
         } else {
+            // The 'true' content should be set to the pretext and post text since the 
+            // test is now longer than the editing area by 1
             this.editorInstance.textArea.shadowContent[currentLineOffset] =
                 preText + character + postText;
 
+            // Right shift all visible text since the inserted character is at the end
+            // and the next character needs to be visible
             this.editorInstance.textArea.rightshiftText();
+            // Increase the horizontal viewOffset by one since the text has been shifted right
             this.editorInstance.textArea.viewOffSet++;
         }
 
