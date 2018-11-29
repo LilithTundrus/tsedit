@@ -231,7 +231,7 @@ export default class TextArea {
 
     // This will move the view of the editor 1 character to the left, using
     // the 'shadow' version of the document
-    // TODO: this needs fixing after the offset being changed to be per line!!
+    // TODO: this can sometimes not work correctly and improperly display text
 
     leftShiftText(ammount?: number) {
         if (!ammount) ammount = 0;
@@ -254,12 +254,14 @@ export default class TextArea {
 
     // This will move the view of the editor 1 character to the right, using
     // the 'shadow' version of the document
-    // TODO: this needs fixing after the offset being changed to be per line!!
+    // TODO: this can sometimes not work correctly and improperly display text
 
     rightshiftText(ammount?: number) {
         if (!ammount) ammount = 0;
         // Get all currently visible lines as an array
         let lines = this.getVisibleLines();
+
+        // TODO: there's an issue with this where the text isn't shifted properly on all lines
 
         lines.forEach((line, index) => {
             // Set the currently iterated line to the line minus one character of the string
@@ -289,7 +291,7 @@ export default class TextArea {
         // Get all currently visible lines as an array
         let visibleLines = this.getVisibleLines();
         // Get the next line index to what is currently visible
-        let nextVisibleLineIndex = visibleLines.length + this.internalVerticalOffset - 1;
+        let nextVisibleLineIndex = visibleLines.length + this.internalVerticalOffset;
 
         // Get the 'true' text of the next line, plus the view offset
         let trueContent = this.shadowContent[nextVisibleLineIndex].substring(this.viewOffSet);
@@ -347,22 +349,6 @@ export default class TextArea {
      * @returns
      * @memberof TextArea
      */
-    // getVisibleLines() {
-    //     let visibleLines = [];
-    //     // Relative height of the textArea itself
-    //     let textAreaRelativeHeight = this.textArea.height - 2;
-    //     // Offset is just shorthand for the class's vertical offset
-    //     let offset = this.verticalScrollOffset;
-
-    //     let bottom = this.textArea.getScroll();
-
-    //     for (let i = bottom; i < textAreaRelativeHeight; i++) {
-    //         // Push the current line to the temporary array
-    //         visibleLines.push(this.textArea.getLine(i));
-    //     }
-    //     return visibleLines;
-    // }
-
     getVisibleLines() {
         let visibleLines = [];
         // Relative height of the textArea itself
