@@ -240,7 +240,7 @@ export default class TextArea {
 
         lines.forEach((line, index) => {
             // Current line index is the iterated index plus the vertical scroll offset
-            let currentLineIndex = index + this.verticalScrollOffset;
+            let currentLineIndex = index + this.internalVerticalOffset;
             // The 'true' text is the same index in the shadowContent array
             let trueText = this.shadowContent[currentLineIndex];
             // Set the current line to the 'true' text by 1 to the left
@@ -264,7 +264,7 @@ export default class TextArea {
         lines.forEach((line, index) => {
             // Set the currently iterated line to the line minus one character of the string
             // The right shifting of text doesn't need to know what the true text is (for now)
-            this.textArea.setLine(index + this.verticalScrollOffset, line.substring(1 + ammount));
+            this.textArea.setLine(index + this.internalVerticalOffset, line.substring(1 + ammount));
         });
     }
 
@@ -275,7 +275,7 @@ export default class TextArea {
         let visibleLines = this.getVisibleLines();
 
         // Get the previous line index to what is currently visible
-        let previousVisibleLineIndex = /* this.verticalScrollOffset - 1 + */ visibleLines.length - 1;
+        let previousVisibleLineIndex = this.internalVerticalOffset - 1 + visibleLines.length - 1;
 
         // Get the 'true' text of the next line, plus the view offset
         let trueContent = this.shadowContent[previousVisibleLineIndex].substring(this.viewOffSet);
