@@ -672,6 +672,8 @@ export default class KeyHandler {
                 this.editorInstance.screen.render();
                 // Reduce the verticalScrollOffset by one to match the blessed scroll index
                 this.editorInstance.textArea.verticalScrollOffset--;
+                this.editorInstance.textArea.internalVerticalOffset--;
+
                 fs.writeFileSync('./vertical.txt', this.editorInstance.textArea.verticalScrollOffset)
 
             } else {
@@ -722,6 +724,7 @@ export default class KeyHandler {
                     this.editorInstance.screen.render();
                     // Increase the verticalScrollOffset by one to match the blessed scroll index
                     this.editorInstance.textArea.verticalScrollOffset++;
+                    this.editorInstance.textArea.internalVerticalOffset++;
 
                     fs.writeFileSync('./vertical.txt', this.editorInstance.textArea.verticalScrollOffset)
                 }

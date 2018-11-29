@@ -30,6 +30,8 @@ export default class TextArea {
     keyHandler: KeyHandler;
     // Used to store the vertical offset from the first line
     verticalScrollOffset: number = 0;
+    // Used to keep a way to get visible lines
+    internalVerticalOffset: number = 0;
 
     constructor(editorInstance: Editor, content) {
         this.editorInstance = editorInstance;
@@ -283,14 +285,11 @@ export default class TextArea {
 
     // This function ensures that on a vertical scroll, the previous line is still on the right
     // horizontal view offset
-
-    // NOTE: the offset is off by around 20 (or the height of the textarea) after scrolling to the bottom
-    // portions of the screen
     reformTextDownArrow() {
         // Get all currently visible lines as an array
         let visibleLines = this.getVisibleLines();
         // Get the next line index to what is currently visible
-        let nextVisibleLineIndex = visibleLines.length + this.verticalScrollOffset - 1;
+        let nextVisibleLineIndex = visibleLines.length + this.internalVerticalOffset - 1;
 
         // Get the 'true' text of the next line, plus the view offset
         let trueContent = this.shadowContent[nextVisibleLineIndex].substring(this.viewOffSet);
@@ -339,16 +338,37 @@ export default class TextArea {
         return relativeBottom;
     }
 
+    // TODO: this need a fix after the offset being changed to per-line
+    // the cusror probably needs to be ignored and maybe using something like the blessed
+    // getscroll() method and subtracting the screen will work...
+    // Basically the offset needs to be used but the visible text before and after it can get weird
+
     /** Return the visible lines of the textArea as an array
      * @returns
      * @memberof TextArea
      */
+    // getVisibleLines() {
+    //     let visibleLines = [];
+    //     // Relative height of the textArea itself
+    //     let textAreaRelativeHeight = this.textArea.height - 2;
+    //     // Offset is just shorthand for the class's vertical offset
+    //     let offset = this.verticalScrollOffset;
+
+    //     let bottom = this.textArea.getScroll();
+
+    //     for (let i = bottom; i < textAreaRelativeHeight; i++) {
+    //         // Push the current line to the temporary array
+    //         visibleLines.push(this.textArea.getLine(i));
+    //     }
+    //     return visibleLines;
+    // }
+
     getVisibleLines() {
         let visibleLines = [];
         // Relative height of the textArea itself
         let textAreaRelativeHeight = this.textArea.height - 2;
         // Offset is just shorthand for the class's vertical offset
-        let offset = this.verticalScrollOffset;
+        let offset = this.internalVerticalOffset;
 
         for (let i = offset; i < textAreaRelativeHeight + offset; i++) {
             // Push the current line to the temporary array
