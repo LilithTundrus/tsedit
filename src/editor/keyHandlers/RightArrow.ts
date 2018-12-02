@@ -2,10 +2,8 @@
 'use strict';
 
 // Node/NPM dependencies
-import * as blessed from 'blessed';
 import Editor from '../Editor';
-// Used for debugging
-import * as fs from 'fs';
+
 
 // This class contains all methods for the right arrow key within the TextArea
 
