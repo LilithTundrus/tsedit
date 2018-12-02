@@ -586,12 +586,31 @@ export default class KeyHandler {
                 this.editorInstance.screen.render();
             }
             else if (cursor.x == 2 && this.editorInstance.textArea.viewOffSet == 0) {
-                // Do nothing (for now)
+                // TODO: This should check for the next line's text and shift the view to the right most
+                // character like the end key does
+                if (cursor.y == 3 && this.editorInstance.textArea.textArea.getScrollPerc() > 0) {
+                    // Scroll the textArea's visible contents up by one
+                    this.editorInstance.textArea.textArea.scroll(-1);
+
+                    // Make sure that the previous line is on the right horizontal scroll index
+                    this.editorInstance.textArea.reformTextUpArrow();
+                    // Render the text reforms
+                    this.editorInstance.screen.render();
+
+                    // Keep the cursor in its previous position
+                    // For some reason setting the y on this to 2 scrolls more 'smoothly' than 3 
+                    // (less cursor jank)
+                    this.editorInstance.program.cursorPos(2, cursor.x - 1);
+                    // Render the cursor change
+                    this.editorInstance.screen.render();
+                    // Reduce the verticalScrollOffset by one to match the blessed scroll index
+                    this.editorInstance.textArea.verticalScrollOffset--;
+                    this.editorInstance.textArea.internalVerticalOffset--;
+
+                }
             }
             // If the viewOffset for the textArea isn't 0, scroll the textArea to the left by 1
             else if (cursor.x == 2 && this.editorInstance.textArea.viewOffSet !== 0) {
-                // TODO: prevent the cursor from moving past the current line's text length
-
                 // Decrease the horizontal view offset of the textArea by one
                 this.editorInstance.textArea.viewOffSet--;
                 // Visually shift all visible text to the left by one
@@ -609,7 +628,6 @@ export default class KeyHandler {
         // This callback returns an err and data object, the data object has the x/y 
         // position of the cursor
         this.editorInstance.program.getCursor((err, cursor) => {
-
             // If the cursor is not at the end of the line the cursor is on, move it forward one
             if (cursor.x < this.editorInstance.screen.width - 1) {
                 this.rightArrow.rightArrowHandlerBasic(cursor);

@@ -101,8 +101,6 @@ export default class Editor {
         // TODO: The first thing to do should be a navigable textArea, horiztonally and vertically
         // that allows for text editing and proper flow
 
-        // TODO: how the view offsets are being modified is NOT sustainable and needs to be handled better
-
         // Set the title of the terminal window (if any) -- this will eventually take cli arguments
         // for reading a file to be edited
         this.screen.title = `TS-EDIT - ${this.filePath}`;

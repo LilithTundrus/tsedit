@@ -35,7 +35,7 @@ export default class RightArrow {
             this.editorInstance.screen.render();
         }
         // Else, the end of the line has been reach and a reflow of the text and the cursor can 
-        // occur 
+        // occur
         else {
             // If the cursor's y position is NOT at the bottom of the textArea
             if (cursor.y < this.editorInstance.screen.height - 1) {
@@ -85,7 +85,6 @@ export default class RightArrow {
 
         // The 'true' text for the current line
         let shadowLineText = this.editorInstance.textArea.shadowContent[currentLineOffset];
-
 
         // If the current line's length is greater than the viewoffset plus the cursor position
         if (shadowLineText.length >= this.editorInstance.textArea.viewOffSet + cursor.x - 1) {
