@@ -19,7 +19,12 @@ export default class LeftArrow {
     }
 
     leftArrowHandlerBasic(cursor) {
+        this.editorInstance.program.cursorBackward();
+        this.editorInstance.screen.render();
+    }
 
+    leftArrowHandlerNoOffset(cursor) {
+        
     }
 
     leftArrowHandlerShiftText(cursor) {

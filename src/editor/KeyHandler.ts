@@ -3,6 +3,7 @@
 
 // Node/NPM dependencies
 import Editor from './Editor';
+import LeftArrow from './keyHandlers/LeftArrow';
 import RightArrow from './keyHandlers/rightArrow';
 // Used for debugging
 import * as fs from 'fs';
@@ -17,10 +18,12 @@ export default class KeyHandler {
     // The editorInstance allows us to access features from the Editor class instance to do things
     // like change state, etc.
     private editorInstance: Editor;
-    private rightArrow: RightArrow
+    private rightArrow: RightArrow;
+    private leftArrow: LeftArrow;
 
     constructor(editorInstance) {
         this.editorInstance = editorInstance;
+        this.leftArrow = new LeftArrow(this.editorInstance);
         this.rightArrow = new RightArrow(this.editorInstance);
     }
 
@@ -29,7 +32,7 @@ export default class KeyHandler {
 
     // TODO: When in a scroll offset and the text is shorter than the current offset and a character
     // is inserted on that line, make sure the view snaps back to that line
-    // This needs to happen for ALL key handlers
+    // This needs to happen for ALL keys
 
     // TODO: TEST ALL OF THIS A LOT
     mainKeyHandler(character, cursor) {
@@ -582,12 +585,10 @@ export default class KeyHandler {
         this.editorInstance.program.getCursor((err, cursor) => {
             // If the cursor is not at the end of the line the cursor is on, move it backwards one
             if (cursor.x > 2) {
-                this.editorInstance.program.cursorBackward();
-                this.editorInstance.screen.render();
+                this.leftArrow.leftArrowHandlerBasic(cursor);
             }
+            // TODO: have this scroll to the END of the next line
             else if (cursor.x == 2 && this.editorInstance.textArea.viewOffSet == 0) {
-                // TODO: This should check for the next line's text and shift the view to the right most
-                // character like the end key does
                 if (cursor.y == 3 && this.editorInstance.textArea.textArea.getScrollPerc() > 0) {
                     // Scroll the textArea's visible contents up by one
                     this.editorInstance.textArea.textArea.scroll(-1);
@@ -606,20 +607,17 @@ export default class KeyHandler {
                     // Reduce the verticalScrollOffset by one to match the blessed scroll index
                     this.editorInstance.textArea.verticalScrollOffset--;
                     this.editorInstance.textArea.internalVerticalOffset--;
+                } else if (cursor.y > 3) {
+
+                    this.editorInstance.program.cursorUp();
+                    // Reduce the verticalScrollOffset by one to match the blessed scroll index
+                    this.editorInstance.textArea.verticalScrollOffset--;
 
                 }
             }
             // If the viewOffset for the textArea isn't 0, scroll the textArea to the left by 1
             else if (cursor.x == 2 && this.editorInstance.textArea.viewOffSet !== 0) {
-                // Decrease the horizontal view offset of the textArea by one
-                this.editorInstance.textArea.viewOffSet--;
-                // Visually shift all visible text to the left by one
-                this.editorInstance.textArea.leftShiftText();
-                // Render the text shift
-                this.editorInstance.screen.render();
-                // Keep the cursor right against the left bound of the textArea
-                // (this can sometimes get moved due to the redraw of the text)
-                this.editorInstance.program.cursorPos(cursor.y - 1, 1);
+                this.leftArrow.leftArrowHandlerShiftText(cursor);
             }
         });
     }
@@ -779,7 +777,6 @@ export default class KeyHandler {
 
             // If the text is in a horizontally scrolling state
             if (viewOffset > 0) {
-                // This will need a bit of work
                 // If the text's length is less than the screen, the cursor just needs to move
                 if (currentLineText.length < this.editorInstance.textArea.textArea.width) {
                     this.editorInstance.program.cursorPos(cursor.y - 1, currentLineText.length + 1);
