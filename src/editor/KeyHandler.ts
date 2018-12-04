@@ -589,31 +589,7 @@ export default class KeyHandler {
             }
             // TODO: have this scroll to the END of the next line
             else if (cursor.x == 2 && this.editorInstance.textArea.viewOffSet == 0) {
-                if (cursor.y == 3 && this.editorInstance.textArea.textArea.getScrollPerc() > 0) {
-                    // Scroll the textArea's visible contents up by one
-                    this.editorInstance.textArea.textArea.scroll(-1);
-
-                    // Make sure that the previous line is on the right horizontal scroll index
-                    this.editorInstance.textArea.reformTextUpArrow();
-                    // Render the text reforms
-                    this.editorInstance.screen.render();
-
-                    // Keep the cursor in its previous position
-                    // For some reason setting the y on this to 2 scrolls more 'smoothly' than 3 
-                    // (less cursor jank)
-                    this.editorInstance.program.cursorPos(2, cursor.x - 1);
-                    // Render the cursor change
-                    this.editorInstance.screen.render();
-                    // Reduce the verticalScrollOffset by one to match the blessed scroll index
-                    this.editorInstance.textArea.verticalScrollOffset--;
-                    this.editorInstance.textArea.internalVerticalOffset--;
-                } else if (cursor.y > 3) {
-
-                    this.editorInstance.program.cursorUp();
-                    // Reduce the verticalScrollOffset by one to match the blessed scroll index
-                    this.editorInstance.textArea.verticalScrollOffset--;
-
-                }
+                this.leftArrow.leftArrowHandlerNoOffset(cursor);
             }
             // If the viewOffset for the textArea isn't 0, scroll the textArea to the left by 1
             else if (cursor.x == 2 && this.editorInstance.textArea.viewOffSet !== 0) {
