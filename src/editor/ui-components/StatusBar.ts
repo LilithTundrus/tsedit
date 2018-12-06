@@ -23,8 +23,8 @@ export default class StatusBar {
 
     // Declare properties for what information the statusBar consists of
     private statusInfo = '< Press Ctrl + W to quit >';
-    private row = 0;
-    private column = 0;
+    private row = 1;
+    private column = 1;
 
     constructor(editorInstance: Editor) {
         this.editorInstance = editorInstance;

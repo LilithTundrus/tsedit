@@ -654,6 +654,7 @@ export default class KeyHandler {
             } else {
                 // process.exit(0);
             }
+            // NOTE: This 'works' but not when the up/down arrow are being pressed one after another
             this.editorInstance.statusBar.setRows(this.editorInstance.textArea.verticalScrollOffset + 1);
         });
     }
@@ -703,9 +704,10 @@ export default class KeyHandler {
                     fs.writeFileSync('./vertical.txt', this.editorInstance.textArea.verticalScrollOffset)
                 }
             }
-        });
-        this.editorInstance.statusBar.setRows(this.editorInstance.textArea.verticalScrollOffset + 1);
 
+            // NOTE: This 'works' but not when the up/down arrow are being pressed one after another
+            this.editorInstance.statusBar.setRows(this.editorInstance.textArea.verticalScrollOffset + 1);
+        });
     }
 
     homeHandler() {
