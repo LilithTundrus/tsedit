@@ -315,7 +315,7 @@ export default class KeyHandler {
     }
 
     // TODO: Make sure all of this actually works
-    // TODO: this will need to eventually adjuset the viewing offset accordingly when
+    // TODO: this will need to eventually adjust the viewing offset accordingly when
     // entering a new line below a line longer than the current viewOffset
     enterHandler() {
         this.editorInstance.program.getCursor((err, cursor) => {
@@ -580,7 +580,6 @@ export default class KeyHandler {
         // This will need a lot of work, should be similar to the main keyhandler
     }
 
-    // TODO: have this shift the text view left/right depending on the previous line's length compared to the current line
     leftArrowHandler() {
         // This callback returns an err and data object, the data object has the x/y 
         // position of the cursor
@@ -650,11 +649,12 @@ export default class KeyHandler {
                 this.editorInstance.textArea.verticalScrollOffset--;
                 this.editorInstance.textArea.internalVerticalOffset--;
 
-                fs.writeFileSync('./vertical.txt', this.editorInstance.textArea.verticalScrollOffset)
+                // fs.writeFileSync('./vertical.txt', this.editorInstance.textArea.verticalScrollOffset)
 
             } else {
-                // process.exit(0)
+                // process.exit(0);
             }
+            this.editorInstance.statusBar.setRows(this.editorInstance.textArea.verticalScrollOffset + 1);
         });
     }
 
@@ -704,6 +704,8 @@ export default class KeyHandler {
                 }
             }
         });
+        this.editorInstance.statusBar.setRows(this.editorInstance.textArea.verticalScrollOffset + 1);
+
     }
 
     homeHandler() {

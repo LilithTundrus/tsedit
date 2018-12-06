@@ -37,14 +37,9 @@ export default class LeftArrow {
             // Render the text reforms
             this.editorInstance.screen.render();
 
-            // Move the view to the END of the next line here if it's greater than the width
-            // of the textArea
             let currentLineOffset = this.editorInstance.textArea.calculateScrollingOffset(cursor);
 
-            // Get the line of text that the cursor is  on minus the borders of the screen
-            let previousLineText = this.editorInstance.textArea.textArea.getLine(currentLineOffset - 1);
-
-            // The 'true' text for the current line
+            // The 'true' text for the previous line
             let shadowLineText = this.editorInstance.textArea.shadowContent[currentLineOffset - 1];
 
             // Keep the cursor in its previous position
@@ -57,6 +52,8 @@ export default class LeftArrow {
             this.editorInstance.textArea.verticalScrollOffset--;
             this.editorInstance.textArea.internalVerticalOffset--;
 
+            // Move the view to the END of the next line here if it's greater than the width
+            // of the textArea (after the up arrow shift has been performed)
             if (shadowLineText.length > this.editorInstance.textArea.textArea.width) {
                 this.editorInstance.textArea.keyHandler.endHandler();
             }
