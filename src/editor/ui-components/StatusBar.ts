@@ -106,10 +106,10 @@ export default class StatusBar {
 
     private constructStatusBarText() {
         // This function will take each section of the statusbar and reconstruct it
-        this.editorInstance.program.saveCursor('beh');
-        this.statusBar.setContent(`Line:${this.row} | Col:${this.column} \t ${this.statusInfo}`);
+        this.editorInstance.program.saveCursor('statusBar');
+        this.statusBar.setContent(`Line:${this.row} | Col:${this.column}\t ${this.statusInfo}`);
         this.editorInstance.screen.render();
-        this.editorInstance.program.restoreCursor('beh');
+        this.editorInstance.program.restoreCursor('statusBar');
 
     }
 }

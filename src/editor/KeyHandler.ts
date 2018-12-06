@@ -580,6 +580,7 @@ export default class KeyHandler {
         // This will need a lot of work, should be similar to the main keyhandler
     }
 
+    // TODO: Make sure the statusbar column and row data gets updated here
     leftArrowHandler() {
         // This callback returns an err and data object, the data object has the x/y 
         // position of the cursor
@@ -595,9 +596,12 @@ export default class KeyHandler {
             else if (cursor.x == 2 && this.editorInstance.textArea.viewOffSet !== 0) {
                 this.leftArrow.leftArrowHandlerShiftText(cursor);
             }
+            this.editorInstance.statusBar.setRows(this.editorInstance.textArea.verticalScrollOffset + 1);
+
         });
     }
 
+    // TODO: Make sure the statusbar column and row data gets updated here
     rightArrowHandler() {
         // This callback returns an err and data object, the data object has the x/y 
         // position of the cursor
@@ -654,7 +658,6 @@ export default class KeyHandler {
             } else {
                 // process.exit(0);
             }
-            // NOTE: This 'works' but not when the up/down arrow are being pressed one after another
             this.editorInstance.statusBar.setRows(this.editorInstance.textArea.verticalScrollOffset + 1);
         });
     }
@@ -705,7 +708,6 @@ export default class KeyHandler {
                 }
             }
 
-            // NOTE: This 'works' but not when the up/down arrow are being pressed one after another
             this.editorInstance.statusBar.setRows(this.editorInstance.textArea.verticalScrollOffset + 1);
         });
     }
