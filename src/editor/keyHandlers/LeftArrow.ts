@@ -27,6 +27,8 @@ export default class LeftArrow {
         // If the cursor is at the top of the view windwow AND the textArea
         // is not at the first scroll line
         if (cursor.y == 3 && this.editorInstance.textArea.textArea.getScrollPerc() > 0) {
+            // Set the line to the 'true' content before it is seen
+
             // Scroll the textArea's visible contents up by one
             this.editorInstance.textArea.textArea.scroll(-1);
 
@@ -37,6 +39,13 @@ export default class LeftArrow {
 
             // Move the view to the END of the next line here if it's greater than the width
             // of the textArea
+            let currentLineOffset = this.editorInstance.textArea.calculateScrollingOffset(cursor);
+
+            // Get the line of text that the cursor is  on minus the borders of the screen
+            let previousLineText = this.editorInstance.textArea.textArea.getLine(currentLineOffset - 1);
+
+            // The 'true' text for the current line
+            let shadowLineText = this.editorInstance.textArea.shadowContent[currentLineOffset - 1];
 
             // Keep the cursor in its previous position
             // For some reason setting the y on this to 2 scrolls more 'smoothly' than 3 
@@ -47,12 +56,14 @@ export default class LeftArrow {
             // Reduce the verticalScrollOffset by one to match the blessed scroll index
             this.editorInstance.textArea.verticalScrollOffset--;
             this.editorInstance.textArea.internalVerticalOffset--;
-        } else if (cursor.y > 3) {
 
+            if (shadowLineText.length > this.editorInstance.textArea.textArea.width) {
+                this.editorInstance.textArea.keyHandler.endHandler();
+            }
+        } else if (cursor.y > 3) {
             this.editorInstance.program.cursorUp();
             // Reduce the verticalScrollOffset by one to match the blessed scroll index
             this.editorInstance.textArea.verticalScrollOffset--;
-
         }
     }
 

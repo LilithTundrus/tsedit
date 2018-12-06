@@ -314,6 +314,7 @@ export default class KeyHandler {
         this.editorInstance.program.cursorPos(cursor.y - 1, cursor.x - 1);
     }
 
+    // TODO: Make sure all of this actually works
     // TODO: this will need to eventually adjuset the viewing offset accordingly when
     // entering a new line below a line longer than the current viewOffset
     enterHandler() {
@@ -579,6 +580,7 @@ export default class KeyHandler {
         // This will need a lot of work, should be similar to the main keyhandler
     }
 
+    // TODO: have this shift the text view left/right depending on the previous line's length compared to the current line
     leftArrowHandler() {
         // This callback returns an err and data object, the data object has the x/y 
         // position of the cursor
@@ -587,7 +589,6 @@ export default class KeyHandler {
             if (cursor.x > 2) {
                 this.leftArrow.leftArrowHandlerBasic(cursor);
             }
-            // TODO: have this scroll to the END of the next line
             else if (cursor.x == 2 && this.editorInstance.textArea.viewOffSet == 0) {
                 this.leftArrow.leftArrowHandlerNoOffset(cursor);
             }
@@ -613,8 +614,8 @@ export default class KeyHandler {
         });
     }
 
-    // TODO: Figure out why this and the down arrow can cause text issues
-    // TODO: have this shift the text left/right depending on the previous line's length compared to the current line
+    // TODO: have this and the down arrow handler behave differently depending on the length of the
+    // next/previous line that acts more like an editor should
     upArrowHandler() {
         // This callback returns an err and data object, the data object has the x/y 
         // position of the cursor
