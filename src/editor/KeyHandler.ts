@@ -596,8 +596,8 @@ export default class KeyHandler {
             else if (cursor.x == 2 && this.editorInstance.textArea.viewOffSet !== 0) {
                 this.leftArrow.leftArrowHandlerShiftText(cursor);
             }
+            // TODO: Rework this and the set cols to simply work on any keypress event
             this.editorInstance.statusBar.setRows(this.editorInstance.textArea.verticalScrollOffset + 1);
-
         });
     }
 
@@ -614,6 +614,7 @@ export default class KeyHandler {
             } else {
                 this.rightArrow.rightHandlerForwwardShift(cursor);
             }
+            this.editorInstance.statusBar.setRows(this.editorInstance.textArea.verticalScrollOffset + 1);
         });
     }
 

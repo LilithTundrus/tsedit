@@ -340,11 +340,6 @@ export default class TextArea {
         return relativeBottom;
     }
 
-    // TODO: this need a fix after the offset being changed to per-line
-    // the cusror probably needs to be ignored and maybe using something like the blessed
-    // getscroll() method and subtracting the screen will work...
-    // Basically the offset needs to be used but the visible text before and after it can get weird
-
     /** Return the visible lines of the textArea as an array
      * @returns
      * @memberof TextArea

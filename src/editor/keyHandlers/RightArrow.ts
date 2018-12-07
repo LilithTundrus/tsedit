@@ -145,5 +145,4 @@ export default class RightArrow {
             }
         }
     }
-
 }
