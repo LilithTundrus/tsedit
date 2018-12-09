@@ -333,34 +333,7 @@ export default class KeyHandler {
             }
             // Cursor is at the 'end' of the line (still checks for the viewOffset)
             else if (cursor.x >= this.editorInstance.screen.width - 1) {
-                if (this.editorInstance.textArea.viewOffSet > 0) {
-                    // Handle this like the enterHandlerStartOfLine
-                } else {
-                    // In this case, the line happens to be just as long as the 
-                    // viewing window, but it should just create a blank line below the current one
-
-                    // Insert a blank line BELOW the current line so the content flows down by one,
-                    // copying how a lot of editors work when enter is hit at the end of a line
-                    this.editorInstance.textArea.textArea.insertLine(currentLineOffset + 1, '');
-                    // Render the line change
-                    this.editorInstance.screen.render();
-
-                    // Set the cursor back to the beginning of the next line if 
-                    // it is not at the bottom of the textArea
-                    if (cursor.y < this.editorInstance.screen.height - 1) {
-                        this.editorInstance.program.cursorPos(cursor.y, 1);
-                    } else {
-                        // Scroll the textArea by one
-                        this.editorInstance.textArea.textArea.scroll(1);
-                        // Put the cursor at the start of the current line
-                        this.editorInstance.program.cursorPos(cursor.y - 1, 1);
-                        // Increase the verticalScrollOffset by one to match the blessed scroll index
-                    }
-                    let nextLineIndex = currentLineOffset + 1;
-                    this.editorInstance.textArea.shadowContent.splice(nextLineIndex, 0, '');
-                    // Render the line change
-                    this.editorInstance.screen.render();
-                }
+                this.enter.enterHandlerEndOfLine(cursor);
             } else {
                 // Cursor is in the middle somewhere, a check for the viewoffset still needs to occur
                 // along with handling when the line

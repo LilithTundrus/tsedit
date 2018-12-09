@@ -8,6 +8,7 @@ import Editor from '../Editor';
 // This class contains all methods for the enter key within the TextArea
 
 export default class Enter {
+    // TODO: Make the code that is repeated their own functions (like the scrolling, etc)
 
     // The editorInstance allows us to access features from the Editor class instance to do things
     // like change state, etc.
@@ -239,8 +240,44 @@ export default class Enter {
         }
     }
 
-    enterHandler() {
+    enterHandlerEndOfLine(cursor) {
+        // Variable to get the current offset number for the line the cursor is on,
+        // including the scrolling position of the textArea
+        let currentLineOffset = this.editorInstance.textArea.calculateScrollingOffset(cursor);
 
+        if (this.editorInstance.textArea.viewOffSet > 0) {
+            // Handle this like the enterHandlerStartOfLine
+        } else {
+            // In this case, the line happens to be just as long as the 
+            // viewing window, but it should just create a blank line below the current one
+
+            // Insert a blank line BELOW the current line so the content flows down by one,
+            // copying how a lot of editors work when enter is hit at the end of a line
+            this.editorInstance.textArea.textArea.insertLine(currentLineOffset + 1, '');
+            // Render the line change
+            this.editorInstance.screen.render();
+
+            // Set the cursor back to the beginning of the next line if 
+            // it is not at the bottom of the textArea
+            if (cursor.y < this.editorInstance.screen.height - 1) {
+                this.editorInstance.program.cursorPos(cursor.y, 1);
+                // Increase the verticalScrollOffset by one to match the blessed scroll index
+                this.editorInstance.textArea.verticalScrollOffset++;
+            } else {
+                // Scroll the textArea by one
+                this.editorInstance.textArea.textArea.scroll(1);
+                // Put the cursor at the start of the current line
+                this.editorInstance.program.cursorPos(cursor.y - 1, 1);
+                // Increase the verticalScrollOffset by one to match the blessed scroll index
+                this.editorInstance.textArea.verticalScrollOffset++;
+                // Also increase the internal offset since the textArea scrolled
+                this.editorInstance.textArea.internalVerticalOffset++;
+            }
+            let nextLineIndex = currentLineOffset + 1;
+            this.editorInstance.textArea.shadowContent.splice(nextLineIndex, 0, '');
+            // Render the line change
+            this.editorInstance.screen.render();
+        }
     }
 
 }
