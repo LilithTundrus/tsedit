@@ -143,8 +143,9 @@ export default class Enter {
             // it is not at the bottom of the textArea
             if (cursor.y < this.editorInstance.screen.height - 1) {
                 this.editorInstance.program.cursorPos(cursor.y, 1);
-            }
-            else {
+                // Increase the verticalScrollOffset by one to match the blessed scroll index
+                this.editorInstance.textArea.verticalScrollOffset++;
+            } else {
                 // Scroll the textArea by one
                 this.editorInstance.textArea.textArea.scroll(1);
                 // Put the cursor at the start of the current line
@@ -170,6 +171,7 @@ export default class Enter {
                 // it is not at the bottom of the textArea
                 if (cursor.y < this.editorInstance.screen.height - 1) {
                     this.editorInstance.program.cursorPos(cursor.y, 1);
+                    this.editorInstance.textArea.verticalScrollOffset++;
                 } else {
                     // Scroll the textArea by one
                     this.editorInstance.textArea.textArea.scroll(1);
@@ -177,9 +179,12 @@ export default class Enter {
                     this.editorInstance.program.cursorPos(cursor.y - 1, 1);
                     // Increase the verticalScrollOffset by one to match the blessed scroll index
                     this.editorInstance.textArea.verticalScrollOffset++;
+                    // Also increase the internal offset since the textArea scrolled
+                    this.editorInstance.textArea.internalVerticalOffset++;
                 }
                 let nextLineIndex = currentLineOffset + 1;
                 this.editorInstance.textArea.shadowContent.splice(nextLineIndex, 0, '');
+
                 // Render the line change
                 this.editorInstance.screen.render();
             }
@@ -215,8 +220,9 @@ export default class Enter {
                 // it is not at the bottom of the textArea
                 if (cursor.y < this.editorInstance.screen.height - 1) {
                     this.editorInstance.program.cursorPos(cursor.y, 1);
-                }
-                else {
+                    // Increase the verticalScrollOffset by one to match the blessed scroll index
+                    this.editorInstance.textArea.verticalScrollOffset++;
+                } else {
                     // Scroll the textArea by one
                     this.editorInstance.textArea.textArea.scroll(1);
                     // Put the cursor at the start of the current line
@@ -231,6 +237,9 @@ export default class Enter {
                 this.editorInstance.screen.render();
             }
         }
+    }
+
+    enterHandler() {
 
     }
 

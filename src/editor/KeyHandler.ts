@@ -334,7 +334,7 @@ export default class KeyHandler {
             // Cursor is at the 'end' of the line (still checks for the viewOffset)
             else if (cursor.x >= this.editorInstance.screen.width - 1) {
                 if (this.editorInstance.textArea.viewOffSet > 0) {
-
+                    // Handle this like the enterHandlerStartOfLine
                 } else {
                     // In this case, the line happens to be just as long as the 
                     // viewing window, but it should just create a blank line below the current one
@@ -365,7 +365,6 @@ export default class KeyHandler {
                 // Cursor is in the middle somewhere, a check for the viewoffset still needs to occur
                 // along with handling when the line
                 this.enter.enterHandlerAnyColumnInsert(cursor);
-                this.editorInstance.textArea.verticalScrollOffset++;
             }
         });
     }
@@ -470,7 +469,6 @@ export default class KeyHandler {
                 this.editorInstance.program.cursorDown();
                 this.editorInstance.screen.render();
                 this.editorInstance.textArea.verticalScrollOffset++;
-
             }
             // Scroll the text down by one if the cursor is at the bottom of the textArea
             else if (cursor.y == this.editorInstance.screen.height - 1) {
@@ -500,6 +498,11 @@ export default class KeyHandler {
                     this.editorInstance.textArea.internalVerticalOffset++;
 
                     fs.writeFileSync('./vertical.txt', this.editorInstance.textArea.verticalScrollOffset)
+                } else {
+                    // TODO: This should be an option eventually for enabling/disabling sound
+
+                    // Emit a beep/noise when the the textArea cannot scroll any more
+                    // this.editorInstance.program.bell();
                 }
             }
 
