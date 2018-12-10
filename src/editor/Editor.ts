@@ -101,6 +101,9 @@ export default class Editor {
         // TODO: The first thing to do should be a navigable textArea, horiztonally and vertically
         // that allows for text editing and proper flow
 
+        // TODO: Add scroll arrows using ASCII that actually work (saving and restoring the cursor in
+        // the right order with other UI updates should be how to do it)
+
         // Set the title of the terminal window (if any) -- this will eventually take cli arguments
         // for reading a file to be edited
         this.screen.title = `TS-EDIT - ${this.filePath}`;
