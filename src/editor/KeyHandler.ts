@@ -6,6 +6,8 @@ import Editor from './Editor';
 import LeftArrow from './keyHandlers/LeftArrow';
 import RightArrow from './keyHandlers/rightArrow';
 import Enter from './keyHandlers/Enter';
+import Backspace from './keyHandlers/Backspace';
+
 // Used for debugging
 import * as fs from 'fs';
 
@@ -22,6 +24,7 @@ export default class KeyHandler {
     private rightArrow: RightArrow;
     private leftArrow: LeftArrow;
     private enter: Enter;
+    private backspace: Backspace
 
     constructor(editorInstance) {
         this.editorInstance = editorInstance;
@@ -317,9 +320,46 @@ export default class KeyHandler {
         this.editorInstance.program.cursorPos(cursor.y - 1, cursor.x - 1);
     }
 
+    backspaceHandler() {
+        this.editorInstance.program.getCursor((err, cursor) => {
+
+            // This is where all 'standard' keys go (keys not handled elsewhere)
+
+            // If the cursor is less than the right visual bound of the textArea
+            if (cursor.x < this.editorInstance.screen.width - 1) {
+                // Variable to get the current offset number for the line the cursor is on,
+                // including the scrolling position of the textArea
+                let currentLineOffset = this.editorInstance.textArea.calculateScrollingOffset(cursor);
+
+                // Get the line of text that the cursor is on minus the borders of the screen
+                let currentLineText = this.editorInstance.textArea.textArea.getLine(currentLineOffset);
+
+                // If there's no text to begin with
+                if (cursor.x == 2 && currentLineText.length < 1) {
+                    this.backspace.backspaceHandlerBlankLine(cursor);
+                }
+                // If the cursor is at the beginning of the line
+                else if (cursor.x == 2 && currentLineText.length > 1) {
+                    this.backspace.backspaceHandlerStartOfLine(cursor);
+                }
+                // If the cursor is at the end
+                else if (cursor.x >= currentLineText.length + 1) {
+                    this.backspace.backspaceHandlerEndOfLine(cursor);
+                }
+                // If the cursor is somehwere in the middle of the textArea, it's an insert
+                // and the character will be inserted in between the text before and after the cursor
+                else {
+                    this.backspace.backspaceHandlerAnyColumn(cursor);
+                }
+                // Always render the screen to be sure the changes made correctly appear
+                this.editorInstance.screen.render();
+            } else {
+// TODO: this should be handled
+            }
+        });
+    }
+
     // TODO: Make sure all of this actually works
-    // TODO: this will need to eventually adjust the viewing offset accordingly when
-    // entering a new line below a line longer than the current viewOffset
     enterHandler() {
         this.editorInstance.program.getCursor((err, cursor) => {
             // Variable to get the current offset number for the line the cursor is on,

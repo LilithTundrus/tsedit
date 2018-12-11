@@ -19,16 +19,20 @@ export default class Backspace {
     // NOTE: These should mirror the main character insert for the most part except that the character is removed rather
     // than inserted
 
-    backspaceHandlerStartOfLine() {
+    backspaceHandlerStartOfLine(cursor) {
 
     }
 
-    backspaceHandlerAnyColumn() {
+    backspaceHandlerAnyColumn(cursor) {
 
     }
 
 
-    backspaceHandlerEndOfLine() {
+    backspaceHandlerEndOfLine(cursor) {
+
+    }
+
+    backspaceHandlerBlankLine(cursor) {
 
     }
 }

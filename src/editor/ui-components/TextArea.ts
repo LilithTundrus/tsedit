@@ -202,6 +202,10 @@ export default class TextArea {
             this.keyHandler.enterHandler();
         });
 
+        this.textArea.key('backspace', () => {
+            this.keyHandler.backspaceHandler();
+        });
+
 
         this.textArea.on('keypress', (ch, key) => {
             // Return on undefined, these are keys we can handle elsewhere 
