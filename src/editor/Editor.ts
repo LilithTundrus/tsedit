@@ -101,7 +101,7 @@ export default class Editor {
                 contents = fs.readFileSync(this.state.relativePath);
                 this.startEditor(contents);
             }
-            // Else, print an error that the file cannot be opened after launching the editor
+            // Else, print an error that the file cannot be opened after starting the editor
             catch (err) {
                 console.log(`Could not read file ${this.state.relativePath}: ${err}`);
                 process.exit(1);
@@ -126,7 +126,9 @@ export default class Editor {
         // Try to read the passed content buffer 
         try {
             parsedContent = contents.toString();
-        } catch (err) {
+        }
+        // Else, print an error that the file cannot be opened
+        catch (err) {
             console.log(`\nCould not convert buffer to string: ${err}`);
             return process.exit(0);
         }
@@ -160,6 +162,11 @@ export default class Editor {
         this.textArea.textArea.focus();
     }
 
+    
+    /** Update the terminal's title with a given new file path string
+     * @param {string} newFilePath
+     * @memberof Editor
+     */
     setWindowFilePath(newFilePath: string) {
         this.screen.title = `TS-EDIT - ${newFilePath}`;
     }
