@@ -132,7 +132,7 @@ export default class Editor {
         // the right order with other UI updates should be how to do it)
 
         // Set the title of the terminal window (if any)
-        this.screen.title = `TS-EDIT - ${this.state.relativePath}`;
+        this.screen.title = `TS-EDIT - ${this.state.resolvedFilePath}`;
 
         // Initialize all classes needed to construct the base UI
         this.textArea = new TextArea(this, parsedContent);
