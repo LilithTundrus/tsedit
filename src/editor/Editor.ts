@@ -9,6 +9,18 @@ import TextArea from './ui-components/TextArea';
 import StatusBar from './ui-components/StatusBar';
 import { editorState } from '../interfaces';
 
+// TODO: Document literally everything going on!!!
+
+// TODO: On change to the text, the filepath should have a * to indicate that it has not
+// been saved
+
+// TODO: Add scroll arrows using ASCII that actually work (saving and restoring the cursor in
+// the right order with other UI updates should be how to do it)
+
+// TODO: Things that need to be shared across UI components should go here
+// Stuff like, getting and setting the state of the editor/etc.
+
+
 // This is the main editor class that puts all of the pieces together 
 // to create a functioning application
 export default class Editor {
@@ -72,7 +84,7 @@ export default class Editor {
             // Get the FULL path to the current file and set the path to the editor's state
             let resolvedPath = path.resolve(this.state.currentPath, this.state.relativePath);
             this.state.resolvedFilePath = resolvedPath;
-            // Get the file's name on its own
+            // Get the file's name on its own and set the fileName editor state variable
             let fileName = path.basename(this.state.resolvedFilePath);
             this.state.fileName = fileName;
 
@@ -94,8 +106,6 @@ export default class Editor {
                 console.log(`Could not read file ${this.state.relativePath}: ${err}`);
                 process.exit(1);
             }
-
-
         }
     }
 
@@ -113,23 +123,13 @@ export default class Editor {
      */
     startEditor(contents) {
         let parsedContent: string;
+        // Try to read the passed content buffer 
         try {
             parsedContent = contents.toString();
         } catch (err) {
             console.log(`\nCould not convert buffer to string: ${err}`);
             return process.exit(0);
         }
-
-        // TODO: Document literally everything going on!!!
-
-        // TODO: On change to the text, the filepath should have a * to indicate that it has not
-        // been saved
-
-        // TODO: The first thing to do should be a navigable textArea, horiztonally and vertically
-        // that allows for text editing and proper flow
-
-        // TODO: Add scroll arrows using ASCII that actually work (saving and restoring the cursor in
-        // the right order with other UI updates should be how to do it)
 
         // Set the title of the terminal window (if any)
         this.screen.title = `TS-EDIT - ${this.state.resolvedFilePath}`;
@@ -152,7 +152,6 @@ export default class Editor {
             // Put the cursor at line 1, column 1 of the editing window, including the UI
             this.screen.program.cursorForward(1);
             this.screen.program.cursorDown(2);
-            this.screen.render();
         });
 
         // Render the screen so all changes are ensured
@@ -164,7 +163,4 @@ export default class Editor {
     setWindowFilePath(newFilePath: string) {
         this.screen.title = `TS-EDIT - ${newFilePath}`;
     }
-
-    // TODO: Things that need to be shared across UI components should go here
-    // Stuff like, getting and setting the state of the editor/etc.
 }
