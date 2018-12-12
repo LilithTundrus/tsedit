@@ -6,11 +6,14 @@ import * as blessed from 'blessed';
 import * as fs from 'fs';
 import TextArea from './ui-components/TextArea';
 import StatusBar from './ui-components/StatusBar';
+import { editorState } from '../interfaces';
 
 // This is the main editor class that puts all of the pieces together 
 // to create a functioning application
 
 export default class Editor {
+
+    // Variable for holding the given path to the file being edited
     filePath: string;
 
     // The editor's 'state' is going to be something that evolves over time
@@ -28,6 +31,7 @@ export default class Editor {
         color: null
     }
 
+    // Blessed's screen element for setting basic options about how the terminal should operate
     screen = blessed.screen({
         smartCSR: true,
         // Autopad screen elements unless no padding it explicitly required
@@ -40,6 +44,9 @@ export default class Editor {
 
     textArea: TextArea;
     statusBar: StatusBar;
+
+    // State variable for handling state changes for the editor/etc.
+    state: editorState;
 
     /** Creates an instance of Editor.
      * @param {string} [filePath]
@@ -59,11 +66,13 @@ export default class Editor {
 
             let contents;
 
-            // Try and read the file, else print an error that the file cannot be opened after launching the editor
+            // Try and read the file
             try {
                 contents = fs.readFileSync(this.filePath);
                 this.startEditor(contents);
-            } catch (err) {
+            } 
+            // Else, print an error that the file cannot be opened after launching the editor
+            catch (err) {
                 console.log(`Could not read file ${this.filePath}: ${err}`);
                 process.exit(1);
             }
@@ -75,8 +84,7 @@ export default class Editor {
      * @memberof Editor
      */
     private startEditorBlank() {
-        // Get this one working first!
-
+        // TODO: Get this working!
     }
 
     /** Start the editor in a state where the text is already provided
@@ -84,7 +92,6 @@ export default class Editor {
      * @memberof Editor
      */
     private startEditor(contents) {
-        // TODO: Make sure the contents arg is a string, if not, convert the buffer
         let parsedContent: string;
         try {
             parsedContent = contents.toString();
@@ -104,13 +111,14 @@ export default class Editor {
         // TODO: Add scroll arrows using ASCII that actually work (saving and restoring the cursor in
         // the right order with other UI updates should be how to do it)
 
-        // Set the title of the terminal window (if any) -- this will eventually take cli arguments
-        // for reading a file to be edited
+        // Set the title of the terminal window (if any)
         this.screen.title = `TS-EDIT - ${this.filePath}`;
 
-        // Initialize all classes needed to construct the UI
+        // Initialize all classes needed to construct the base UI
         this.textArea = new TextArea(this, parsedContent);
         this.statusBar = new StatusBar(this);
+
+        // Name of the file split away from the path
 
         this.textArea.textArea.setLabel(`${this.filePath}`);
 
@@ -122,20 +130,22 @@ export default class Editor {
         this.screen.program.getCursor((err, data) => {
             this.screen.program.cursorUp(this.screen.height);
             this.screen.program.cursorBackward(this.screen.width);
-            // Put the cursor at line 1, column 1 of the editing window
+            // Put the cursor at line 1, column 1 of the editing window, including the UI
             this.screen.program.cursorForward(1);
             this.screen.program.cursorDown(2);
             this.screen.render();
         });
 
+        // Render the screen so all changes are ensured
         this.screen.render();
+        // Focus the textArea to start out
         this.textArea.textArea.focus();
     }
-
-    // TODO: Things that need to be shared across UI components should go here
-    // Stuff like, getting and setting the state of the editor/etc.
 
     setWindowFilePath(newFilePath: string) {
         this.screen.title = `TS-EDIT - ${newFilePath}`;
     }
+
+    // TODO: Things that need to be shared across UI components should go here
+    // Stuff like, getting and setting the state of the editor/etc.
 }
