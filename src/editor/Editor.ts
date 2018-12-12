@@ -4,13 +4,13 @@
 // Node/NPM dependencies
 import * as blessed from 'blessed';
 import * as fs from 'fs';
+import * as path from 'path';
 import TextArea from './ui-components/TextArea';
 import StatusBar from './ui-components/StatusBar';
 import { editorState } from '../interfaces';
 
 // This is the main editor class that puts all of the pieces together 
 // to create a functioning application
-
 export default class Editor {
 
     // Variable for holding the given path to the file being edited
@@ -53,14 +53,32 @@ export default class Editor {
      * @memberof Editor
      */
     constructor(filePath?: string) {
-        this.filePath = filePath;
 
-        if (!this.filePath) {
+        // Initialize the state of the editor
+        this.state = {
+            currentPath: '',
+            resolvedFilePath: '',
+            relativePath: filePath,
+            fileName: ''
+        };
+
+        if (!filePath) {
             this.startEditorBlank();
         } else {
+            // Set the relative path state for the editor
+            this.state.relativePath = filePath;
+            // Set the current path state to the directory that the editor was started from
+            this.state.currentPath = __dirname;
+            // Get the FULL path to the current file and set the path to the editor's state
+            let resolvedPath = path.resolve(this.state.currentPath, this.state.relativePath);
+            this.state.resolvedFilePath = resolvedPath;
+            // Get the file's name on its own
+            let fileName = path.basename(this.state.resolvedFilePath);
+            this.state.fileName = fileName;
+
             // First, make sure the path exists
-            if (!fs.existsSync(this.filePath)) {
-                console.log(`\nFile ${this.filePath} does not exist.`);
+            if (!fs.existsSync(this.state.relativePath)) {
+                console.log(`\nFile ${this.state.relativePath} does not exist.`);
                 process.exit(1);
             }
 
@@ -68,14 +86,16 @@ export default class Editor {
 
             // Try and read the file
             try {
-                contents = fs.readFileSync(this.filePath);
+                contents = fs.readFileSync(this.state.relativePath);
                 this.startEditor(contents);
-            } 
+            }
             // Else, print an error that the file cannot be opened after launching the editor
             catch (err) {
-                console.log(`Could not read file ${this.filePath}: ${err}`);
+                console.log(`Could not read file ${this.state.relativePath}: ${err}`);
                 process.exit(1);
             }
+
+
         }
     }
 
@@ -83,7 +103,7 @@ export default class Editor {
      * @private
      * @memberof Editor
      */
-    private startEditorBlank() {
+    startEditorBlank() {
         // TODO: Get this working!
     }
 
@@ -91,7 +111,7 @@ export default class Editor {
      * @private
      * @memberof Editor
      */
-    private startEditor(contents) {
+    startEditor(contents) {
         let parsedContent: string;
         try {
             parsedContent = contents.toString();
@@ -112,15 +132,14 @@ export default class Editor {
         // the right order with other UI updates should be how to do it)
 
         // Set the title of the terminal window (if any)
-        this.screen.title = `TS-EDIT - ${this.filePath}`;
+        this.screen.title = `TS-EDIT - ${this.state.relativePath}`;
 
         // Initialize all classes needed to construct the base UI
         this.textArea = new TextArea(this, parsedContent);
         this.statusBar = new StatusBar(this);
 
-        // Name of the file split away from the path
-
-        this.textArea.textArea.setLabel(`${this.filePath}`);
+        // Set the label of the textArea to indicate what file is being edited
+        this.textArea.textArea.setLabel(`${this.state.fileName}`);
 
         // Append each UI element to the blessed screen
         this.screen.append(this.textArea.textArea);
