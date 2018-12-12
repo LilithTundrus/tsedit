@@ -2,5 +2,5 @@
 export interface editorState {
     unsavedWork?: boolean,
     newFile?: boolean,
-    
+    currentPath: string,
 }

@@ -354,7 +354,7 @@ export default class KeyHandler {
                 // Always render the screen to be sure the changes made correctly appear
                 this.editorInstance.screen.render();
             } else {
-// TODO: this should be handled
+                // TODO: this should be handled
             }
         });
     }
@@ -362,10 +362,6 @@ export default class KeyHandler {
     // TODO: Make sure all of this actually works
     enterHandler() {
         this.editorInstance.program.getCursor((err, cursor) => {
-            // Variable to get the current offset number for the line the cursor is on,
-            // including the scrolling position of the textArea
-            let currentLineOffset = this.editorInstance.textArea.calculateScrollingOffset(cursor);
-
             // If cursor is at the beginning of the line
             if (cursor.x == 2) {
                 this.enter.enterHandlerStartOfLine(cursor);
@@ -523,6 +519,7 @@ export default class KeyHandler {
         });
     }
 
+    // TODO: Make sure the statusbar column and row data gets updated here
     homeHandler() {
         let viewOffset = this.editorInstance.textArea.viewOffSet;
         // This callback returns an err and data object, the data object has the x/y position 
@@ -550,6 +547,7 @@ export default class KeyHandler {
         });
     }
 
+    // TODO: Make sure the statusbar column and row data gets updated here
     endHandler() {
         let viewOffset = this.editorInstance.textArea.viewOffSet;
 
