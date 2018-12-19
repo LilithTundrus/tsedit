@@ -4,18 +4,21 @@
 // Node/NPM dependencies
 import Editor from './Editor';
 import LeftArrow from './keyHandlers/LeftArrow';
-import RightArrow from './keyHandlers/rightArrow';
+import RightArrow from './keyHandlers/RightArrow';
 import Enter from './keyHandlers/Enter';
 import Backspace from './keyHandlers/Backspace';
 
 // Used for debugging
 import * as fs from 'fs';
+import { program } from 'blessed';
 
 // This file contains the class for handling key events for the Editor Class's
 // textArea UI component
 
 // TODO: any offsets for horizontal need to be handled internally in the textarea class
 // TODO: Refactor and split this all out...
+
+// TODO: Make sure that this all works correctly, sometimes scrolling vertically can cause issues
 export default class KeyHandler {
 
     // The editorInstance allows us to access features from the Editor class instance to do things
@@ -40,7 +43,14 @@ export default class KeyHandler {
     // is inserted on that line, make sure the view snaps back to that line
     // This needs to happen for ALL keys
 
-    // TODO: TEST ALL OF THIS A LOT
+    // TODO: Fix the issue where scrolling left/right doesn't alwyas properly update the visible text,
+    // at the moment I think it has something to do with how the lines aren't being taken into account that
+    // aren't visible at the moment or something like that since scrolling up/down over the affected lines
+    // 'fixes' the issue. Looks more like it's due to up arrow and the fact that the PREVIOUS lines need 
+    // to be calculated
+
+    // TODO: get this onto the mini dell laptop for performance testing!!
+
     mainKeyHandler(character, cursor) {
         // This is where all 'standard' keys go (keys not handled elsewhere)
 
@@ -411,9 +421,10 @@ export default class KeyHandler {
             // If the cursor is not at the end of the line the cursor is on, move it forward one
             if (cursor.x < this.editorInstance.screen.width - 1) {
                 this.rightArrow.rightArrowHandlerBasic(cursor);
-                // Horiztonally scroll the text right by 1 if the current line is greater than the
-                // width of the editing window
-            } else {
+            }
+            // Horiztonally scroll the text right by 1 if the current line is greater than the
+            // width of the editing window
+            else {
                 this.rightArrow.rightHandlerForwwardShift(cursor);
             }
             this.editorInstance.statusBar.setRows(this.editorInstance.textArea.verticalScrollOffset + 1);
@@ -434,7 +445,6 @@ export default class KeyHandler {
                 // Render the cursor change
                 this.editorInstance.screen.render();
                 this.editorInstance.textArea.verticalScrollOffset--;
-
             }
             // Scroll the text up by one line if the textarea isn't at 0% scroll
             else if (cursor.y == 3 && this.editorInstance.textArea.textArea.getScrollPerc() > 0) {
@@ -455,11 +465,10 @@ export default class KeyHandler {
                 // Reduce the verticalScrollOffset by one to match the blessed scroll index
                 this.editorInstance.textArea.verticalScrollOffset--;
                 this.editorInstance.textArea.internalVerticalOffset--;
-
-                // fs.writeFileSync('./vertical.txt', this.editorInstance.textArea.verticalScrollOffset)
-
             } else {
-                // process.exit(0);
+                // TODO: Make this a preference that can be set
+                // Default terminal bell when input is registered but a further scroll cannot be performed
+                // this.editorInstance.program.bell();
             }
             this.editorInstance.statusBar.setRows(this.editorInstance.textArea.verticalScrollOffset + 1);
         });
@@ -522,8 +531,6 @@ export default class KeyHandler {
     // TODO: Make sure the statusbar column and row data gets updated here
     homeHandler() {
         let viewOffset = this.editorInstance.textArea.viewOffSet;
-        // This callback returns an err and data object, the data object has the x/y position 
-        // of the cursor
         this.editorInstance.program.getCursor((err, cursor) => {
             // If there is a view offset for the textArea
             // TODO: Have this only snap back to the START of the current line

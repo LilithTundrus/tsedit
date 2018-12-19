@@ -12,7 +12,7 @@ import * as fs from 'fs';
 // This file contains one of the blessed components for constructing the UI in an effort to
 // keep this project modular
 
-// Create the textArea textbox, where the actual text being edited will be displayed
+// Create the textArea textbox, where the text being edited will be displayed
 
 export default class TextArea {
 
@@ -37,7 +37,6 @@ export default class TextArea {
         this.editorInstance = editorInstance;
         this.content = content;
         this.keyHandler = new KeyHandler(editorInstance);
-
 
         // Create the textArea blessed box (declared as any due to some typings being incorrect)
         this.textArea = blessed.box(<any>{
@@ -161,8 +160,6 @@ export default class TextArea {
         // Quit on Control-W
         // TODO: This should be aware of whether or not the editor has a file that isn't saved/etc.
         this.textArea.key(['C-w'], () => {
-            // Have this read the content of the new file vs the old 
-            // (could be challenging depending on if the editor started with a file or not)
             return process.exit(0);
         });
 
@@ -183,7 +180,6 @@ export default class TextArea {
         });
 
         this.textArea.key('space', () => {
-            // Determine where to insert the character that was entered based on the cursor position
             // This callback returns an err and data object, the data object has the x/y position of the cursor
             this.editorInstance.program.getCursor((err, cursor) => {
                 this.keyHandler.mainKeyHandler(' ', cursor);
@@ -206,7 +202,6 @@ export default class TextArea {
             this.keyHandler.backspaceHandler();
         });
 
-
         this.textArea.on('keypress', (ch, key) => {
             // Return on undefined, these are keys we can handle elsewhere 
             // (undefined means it isn't a display character)
@@ -219,7 +214,6 @@ export default class TextArea {
             // Determine where to insert the character that was entered based on the cursor position
             // This callback returns an err and data object, the data object has the x/y position of the cursor
             this.editorInstance.program.getCursor((err, cursor) => {
-
                 return this.keyHandler.mainKeyHandler(ch, cursor);
             });
         });

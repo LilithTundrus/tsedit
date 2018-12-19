@@ -85,7 +85,8 @@ export default class RightArrow {
         let shadowLineText = this.editorInstance.textArea.shadowContent[currentLineOffset];
 
         // If the current line's length is greater than the viewoffset plus the cursor position
-        if (shadowLineText.length >= this.editorInstance.textArea.viewOffSet + cursor.x - 1) {
+        // the cursor.x - 2 is so that the last character can be seen for two arrow key presses
+        if (shadowLineText.length >= this.editorInstance.textArea.viewOffSet + cursor.x - 2) {
             // Increase the horizontal view offset of the textArea by one
             this.editorInstance.textArea.viewOffSet++;
             // Visually shift all visible text to the right by one
