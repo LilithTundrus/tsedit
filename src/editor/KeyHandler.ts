@@ -49,6 +49,9 @@ export default class KeyHandler {
     // 'fixes' the issue. Looks more like it's due to up arrow and the fact that the PREVIOUS lines need 
     // to be calculated
 
+    // So right now, It seems like it's a rendering/text insertion issue? It's still happening but the actual 
+    // length of the text can be scrolled to the right using the right arrow keys... this makes no sense
+
     // TODO: get this onto the mini dell laptop for performance testing!!
 
     mainKeyHandler(character, cursor) {
@@ -410,6 +413,7 @@ export default class KeyHandler {
             }
             // TODO: Rework this and the set cols to simply work on any keypress event
             this.editorInstance.statusBar.setRows(this.editorInstance.textArea.verticalScrollOffset + 1);
+            this.editorInstance.statusBar.setColumns(cursor.x + this.editorInstance.textArea.viewOffSet)
         });
     }
 
@@ -428,6 +432,7 @@ export default class KeyHandler {
                 this.rightArrow.rightHandlerForwwardShift(cursor);
             }
             this.editorInstance.statusBar.setRows(this.editorInstance.textArea.verticalScrollOffset + 1);
+            this.editorInstance.statusBar.setColumns(cursor.x + this.editorInstance.textArea.viewOffSet)
         });
     }
 
@@ -469,6 +474,7 @@ export default class KeyHandler {
                 // TODO: Make this a preference that can be set
                 // Default terminal bell when input is registered but a further scroll cannot be performed
                 // this.editorInstance.program.bell();
+                this.editorInstance.textArea.reformTextUpArrow()
             }
             this.editorInstance.statusBar.setRows(this.editorInstance.textArea.verticalScrollOffset + 1);
         });
@@ -480,7 +486,7 @@ export default class KeyHandler {
         // of the cursor
         this.editorInstance.program.getCursor((err, cursor) => {
 
-            // This visually keeps the cursor in bottom bound of the editing window,
+            // This visually keeps the cursor within bottom bound of the editing window,
             // accounting for the extra the statusbar height
             if (cursor.y < this.editorInstance.screen.height - 1) {
                 // If the cursor isn't at the bottom of the textArea, move it down by one

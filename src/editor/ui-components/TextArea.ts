@@ -187,11 +187,11 @@ export default class TextArea {
         });
 
         this.textArea.key('home', () => {
-            this.keyHandler.homeHandler();
+            // this.keyHandler.homeHandler();
         });
 
         this.textArea.key('end', () => {
-            this.keyHandler.endHandler();
+            // this.keyHandler.endHandler();
         });
 
         this.textArea.key('enter', () => {
@@ -281,6 +281,8 @@ export default class TextArea {
         let trueContent = this.shadowContent[previousVisibleLineIndex].substring(this.viewOffSet);
         // Set the line to the 'true' content before it is seen
         this.textArea.setLine(previousVisibleLineIndex, trueContent);
+
+        this.leftShiftText();
     }
 
     // This function ensures that on a vertical scroll, the previous line is still on the right

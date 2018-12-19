@@ -66,6 +66,7 @@ export default class LeftArrow {
 
     leftArrowHandlerShiftText(cursor) {
         // Decrease the horizontal view offset of the textArea by one
+        // (This goes BEFORE the shift so when the current offset is 1, the text still scrolls)
         this.editorInstance.textArea.viewOffSet--;
         // Visually shift all visible text to the left by one
         this.editorInstance.textArea.leftShiftText();
