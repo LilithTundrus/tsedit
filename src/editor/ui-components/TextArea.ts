@@ -220,6 +220,7 @@ export default class TextArea {
 
         // Test file writing function
         // TODO: This should be aware of whether or not the editor has a file already/etc.
+        // IE: Check the state for the editor's file name
         this.textArea.key(['C-s'], () => {
             // TODO: this needs to be doing a lot more eventually
             // Remove the cursor from the text that for SOME REASON shows up
@@ -229,8 +230,6 @@ export default class TextArea {
 
     // This will move the view of the editor 1 character to the left, using
     // the 'shadow' version of the document
-    // TODO: this can sometimes not work correctly and improperly display text
-
     leftShiftText(ammount?: number) {
         if (!ammount) ammount = 0;
         // Get all currently visible lines as an array
@@ -252,8 +251,6 @@ export default class TextArea {
 
     // This will move the view of the editor 1 character to the right, using
     // the 'shadow' version of the document
-    // TODO: this can sometimes not work correctly and improperly display text
-
     rightshiftText(ammount?: number) {
         if (!ammount) ammount = 0;
         // Get all currently visible lines as an array
@@ -270,6 +267,8 @@ export default class TextArea {
 
     // This function ensures that on a vertical scroll, the next line is still on the right
     // horizontal view offset
+
+    // TODO: This STILL make not work, sometimes the text does not get properly rendered on the topmost line
     reformTextUpArrow() {
         if (this.internalVerticalOffset > 1) {
             // Get all currently visible lines as an array
@@ -375,7 +374,9 @@ export default class TextArea {
         // For some the cursor.y relative offset must be removed (add 3)
         let currentLineScrollOffset = this.textArea.getScroll() - cursorYFromRelativeBottom + 3;
 
-        if (this.textArea.getScroll() == 0) currentLineScrollOffset = cursorYRelative;
+        if (this.textArea.getScroll() == 0) {
+            currentLineScrollOffset = cursorYRelative;
+        }
 
         return this.verticalScrollOffset;
     }

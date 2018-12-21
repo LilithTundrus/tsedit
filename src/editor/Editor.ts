@@ -17,9 +17,6 @@ import { editorState } from '../interfaces';
 // TODO: Add scroll arrows using ASCII that actually work (saving and restoring the cursor in
 // the right order with other UI updates should be how to do it)
 
-// TODO: Things that need to be shared across UI components should go here
-// Stuff like, getting and setting the state of the editor/etc.
-
 
 // This is the main editor class that puts all of the pieces together 
 // to create a functioning application
@@ -65,7 +62,6 @@ export default class Editor {
      * @memberof Editor
      */
     constructor(filePath?: string) {
-
         // Initialize the state of the editor
         this.state = {
             currentPath: '',
@@ -114,7 +110,35 @@ export default class Editor {
      * @memberof Editor
      */
     startEditorBlank() {
-        // TODO: Get this working!
+        // Set the title of the terminal window (if any title bar exists)
+        this.screen.title = `TS-EDIT - Untitled`;
+
+        // Initialize all classes needed to construct the base UI
+        this.textArea = new TextArea(this, '');
+        this.statusBar = new StatusBar(this);
+
+        // Set the label of the textArea to indicate what file is being edited
+        this.textArea.textArea.setLabel(`Untitled`);
+        // The filename state should match the label of the editor
+        this.state.fileName = 'Untitled'
+
+        // Append each UI element to the blessed screen
+        this.screen.append(this.textArea.textArea);
+        this.screen.append(this.statusBar.statusBar);
+
+        // Reset the cursor position before rendering the UI
+        this.screen.program.getCursor((err, data) => {
+            this.screen.program.cursorUp(this.screen.height);
+            this.screen.program.cursorBackward(this.screen.width);
+            // Put the cursor at line 1, column 1 of the editing window, including the UI
+            this.screen.program.cursorForward(1);
+            this.screen.program.cursorDown(2);
+        });
+
+        // Render the screen so all changes are ensured
+        this.screen.render();
+        // Focus the textArea to start out
+        this.textArea.textArea.focus();
     }
 
     /** Start the editor in a state where the text is already provided
@@ -133,7 +157,7 @@ export default class Editor {
             return process.exit(0);
         }
 
-        // Set the title of the terminal window (if any)
+        // Set the title of the terminal window (if any title bar exists)
         this.screen.title = `TS-EDIT - ${this.state.resolvedFilePath}`;
 
         // Initialize all classes needed to construct the base UI
@@ -162,7 +186,7 @@ export default class Editor {
         this.textArea.textArea.focus();
     }
 
-    
+
     /** Update the terminal's title with a given new file path string
      * @param {string} newFilePath
      * @memberof Editor
