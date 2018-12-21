@@ -271,20 +271,24 @@ export default class TextArea {
     // This function ensures that on a vertical scroll, the next line is still on the right
     // horizontal view offset
     reformTextUpArrow() {
-        // Get all currently visible lines as an array
-        let visibleLines = this.getVisibleLines();
+        if (this.internalVerticalOffset > 1) {
+            // Get all currently visible lines as an array
+            let visibleLines = this.getVisibleLines();
 
-        // Get the previous line index to what is currently visible
-        let previousVisibleLineIndex = this.internalVerticalOffset - 1 + visibleLines.length - 1;
+            // Get the previous line index to what is currently visible
+            let previousVisibleLineIndex = this.internalVerticalOffset - 1 + visibleLines.length - 1;
 
-        // Get the 'true' text of the next line, plus the view offset
-        let trueContent = this.shadowContent[previousVisibleLineIndex].substring(this.viewOffSet);
-        // Set the line to the 'true' content before it is seen
-        this.textArea.setLine(previousVisibleLineIndex, trueContent);
-        
-        // This ALMOST works, look at down arrow to see how it almost does and compare it
-        // the up arrow now only doesn't render the VERY top line
-        this.leftShiftText();
+            // Get the 'true' text of the next line, plus the view offset
+            let trueContent = this.shadowContent[previousVisibleLineIndex].substring(this.viewOffSet);
+            // Set the line to the 'true' content before it is seen
+            this.textArea.setLine(previousVisibleLineIndex, trueContent);
+
+            // This ALMOST works, look at down arrow to see how it almost does and compare it
+            // the up arrow now only doesn't render the VERY top line
+        }
+        this.editorInstance.textArea.leftShiftText();
+        this.editorInstance.screen.render();
+
     }
 
     // This function ensures that on a vertical scroll, the previous line is still on the right
