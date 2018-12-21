@@ -281,7 +281,9 @@ export default class TextArea {
         let trueContent = this.shadowContent[previousVisibleLineIndex].substring(this.viewOffSet);
         // Set the line to the 'true' content before it is seen
         this.textArea.setLine(previousVisibleLineIndex, trueContent);
-
+        
+        // This ALMOST works, look at down arrow to see how it almost does and compare it
+        // the up arrow now only doesn't render the VERY top line
         this.leftShiftText();
     }
 
