@@ -498,7 +498,7 @@ export default class KeyHandler {
             else if (cursor.y == this.editorInstance.screen.height - 1) {
                 // This AND check prevents a crash that occurs when on the last line of the 
                 // text being edited
-                if (this.editorInstance.textArea.textArea.getScrollPerc() !== 100) {
+                if (this.editorInstance.textArea.textArea.getScrollPerc() !== 100 && this.editorInstance.textArea.shadowContent.length > this.editorInstance.textArea.textArea.height) {
 
                     // Scroll the textArea down by one
                     this.editorInstance.textArea.textArea.scroll(1);
