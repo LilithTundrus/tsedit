@@ -17,6 +17,8 @@ import { editorState } from '../interfaces';
 // TODO: Add scroll arrows using ASCII that actually work (saving and restoring the cursor in
 // the right order with other UI updates should be how to do it)
 
+// TODO: Get everything currently in place FULLY working!!!!
+
 
 // This is the main editor class that puts all of the pieces together 
 // to create a functioning application
@@ -28,7 +30,7 @@ export default class Editor {
     // The editor's 'state' is going to be something that evolves over time
     editorState: string;
 
-    // Create the blessed program object to associate with the blessed screen for the class
+    // Create the blessed program object to associate with the blessed screen for the editor class
     program = blessed.program();
 
     // These are the cursor options for blessed. Declared as any since blessed's typings 
@@ -38,7 +40,7 @@ export default class Editor {
         shape: 'line',
         blink: true,
         color: null
-    }
+    };
 
     // Blessed's screen element for setting basic options about how the terminal should operate
     screen = blessed.screen({
@@ -51,10 +53,12 @@ export default class Editor {
         cursor: this.cursorOptions
     });
 
+    // This is the editor's instance of the textArea class
     textArea: TextArea;
+    // This is the editor's instance of the statusBar class
     statusBar: StatusBar;
 
-    // State variable for handling state changes for the editor/etc.
+    // State variable for handling state changes for the editor/anything else that must be shared
     state: editorState;
 
     /** Creates an instance of Editor.
@@ -90,7 +94,8 @@ export default class Editor {
                 process.exit(1);
             }
 
-            let contents;
+            // Variable to hold the contents of the file being read and used throughout the classs
+            let contents: Buffer;
 
             // Try and read the file
             try {
@@ -120,7 +125,7 @@ export default class Editor {
         // Set the label of the textArea to indicate what file is being edited
         this.textArea.textArea.setLabel(`Untitled`);
         // The filename state should match the label of the editor
-        this.state.fileName = 'Untitled'
+        this.state.fileName = 'Untitled';
 
         // Append each UI element to the blessed screen
         this.screen.append(this.textArea.textArea);
@@ -135,7 +140,7 @@ export default class Editor {
             this.screen.program.cursorDown(2);
         });
 
-        // Render the screen so all changes are ensured
+        // Render the screen so all changes are ensured to show up
         this.screen.render();
         // Focus the textArea to start out
         this.textArea.textArea.focus();
@@ -145,7 +150,7 @@ export default class Editor {
      * @private
      * @memberof Editor
      */
-    startEditor(contents) {
+    startEditor(contents: Buffer) {
         let parsedContent: string;
         // Try to read the passed content buffer 
         try {
@@ -180,7 +185,7 @@ export default class Editor {
             this.screen.program.cursorDown(2);
         });
 
-        // Render the screen so all changes are ensured
+        // Render the screen so all changes are ensured to show up
         this.screen.render();
         // Focus the textArea to start out
         this.textArea.textArea.focus();
